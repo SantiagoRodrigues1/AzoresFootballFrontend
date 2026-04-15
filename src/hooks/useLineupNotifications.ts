@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { API_URL } from '@/services/api';
 
 export interface Notification {
   id: string;
@@ -24,8 +25,6 @@ export function useLineupNotifications(token?: string) {
     setError(null);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
       const response = await fetch(`${API_URL}/team-manager/notifications/lineups`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -80,8 +79,6 @@ export function useFavoriteTeams(token?: string) {
 
     setLoading(true);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
       const response = await fetch(`${API_URL}/user/favorites`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -103,8 +100,6 @@ export function useFavoriteTeams(token?: string) {
     if (!token) return false;
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
       const response = await fetch(`${API_URL}/user/favorites/check/${teamId}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -126,8 +121,6 @@ export function useFavoriteTeams(token?: string) {
     if (!token) return false;
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
       const response = await fetch(`${API_URL}/user/favorites/toggle/${teamId}`, {
         method: 'POST',
         headers: {

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { API_URL } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { CreateMatchModal } from '@/components/admin/CreateMatchModal';
 import { EditMatchModal } from '@/components/admin/EditMatchModal';
@@ -37,7 +38,6 @@ export function MatchesPage() {
     if (!deleteTarget || !token) return;
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
       const response = await fetch(`${API_URL}/admin/matches/${deleteTarget}`, {
         method: 'DELETE',
         headers: {

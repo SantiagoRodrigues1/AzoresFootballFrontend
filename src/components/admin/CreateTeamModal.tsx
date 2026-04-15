@@ -53,7 +53,6 @@ export function CreateTeamModal({ open, onOpenChange, token, onSave }: CreateTea
       setSelectedCompetitionId('');
       const fetchCompetitions = async () => {
         try {
-          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
           const response = await fetch(`${API_URL}/competitions`);
           if (!response.ok) {
             throw new Error('Não foi possível carregar campeonatos');

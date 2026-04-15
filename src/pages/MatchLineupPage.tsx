@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { API_URL } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -211,8 +212,6 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
     const fetchMatchData = async () => {
       try {
         setLoading(true);
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
         // Fetch match data - use team-manager endpoint for team managers, admin for admins
         const endpoint = isAdmin 
           ? `${API_URL}/admin/matches/${matchId}`
@@ -299,8 +298,6 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
 
     const loadSavedLineup = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-        
         const response = await fetch(
           `${API_URL}/team-manager/lineups/${matchId}/${user.assignedTeam}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -357,8 +354,6 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
     const fetchBothLineups = async () => {
       try {
         setLoadingBothLineups(true);
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
         const response = await fetch(`${API_URL}/team-manager/lineups/match/${matchId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -454,8 +449,6 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
 
     setSaving(true);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
       // Sanitize player numbers - convert to valid numbers
       const sanitizePlayerNumber = (num: any): number | null => {
         if (num === null || num === undefined) return null;

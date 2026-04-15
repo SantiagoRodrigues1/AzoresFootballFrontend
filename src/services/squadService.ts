@@ -1,6 +1,7 @@
 // services/squadService.ts
 import axios, { AxiosInstance } from 'axios';
 import { invalidateSession } from '@/utils/authSession';
+import { API_URL } from '@/services/api';
 
 export interface Player {
   id: string;
@@ -22,7 +23,7 @@ class SquadService {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api').replace(/\/+$/, '');
+    this.baseURL = API_URL;
     this.api = axios.create({
       baseURL: this.baseURL,
       headers: {

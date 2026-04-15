@@ -12,7 +12,10 @@ interface FetchOptions extends RequestInit {
  */
 export function useAuthFetch() {
   const { token } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+  const API_URL = import.meta.env.VITE_API_URL
+    ? (import.meta.env.VITE_API_URL as string).replace(/\/+$/, '')
+        .replace(/(\/api)?$/, '/api')
+    : '/api';
 
   const fetchWithAuth = useCallback(
     async (endpoint: string, options: FetchOptions = {}) => {

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { API_URL } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, MapPin, Eye, Users, Zap, Trophy } from 'lucide-react';
@@ -154,8 +155,6 @@ export function MatchCardPremium({ match, token }: MatchCardPremiumProps) {
 
       try {
         setLoadingLineup(true);
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
         const response = await fetch(`${API_URL}/lineups/match/${matchId}/all`);
 
         if (response.ok) {

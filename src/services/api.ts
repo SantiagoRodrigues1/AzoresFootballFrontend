@@ -1,11 +1,15 @@
 import axios from 'axios';
 import { invalidateSession } from '@/utils/authSession';
 
-// VITE_API_URL must be the full API base URL including /api
-// e.g. http://localhost:3000/api  or  https://your-backend.onrender.com/api
-// Falls back to relative '/api' so same-origin deployments work without any env var.
-const rawApiUrl = import.meta.env.VITE_API_URL || '';
-export const API_URL = rawApiUrl.replace(/\/+$/, '') || '/api';
+// VITE_API_URL: set this in Render to your backend origin.
+// It can be with OR without the /api suffix – this code normalises both:
+//   https://azores-score-backend.onrender.com       → .../api
+//   https://azores-score-backend.onrender.com/api   → .../api (unchanged)
+//   (empty)                                         → /api  (same-origin fallback)
+const rawApiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+export const API_URL = rawApiUrl
+  ? rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`
+  : '/api';
 
 export const api = axios.create({
   baseURL: API_URL,

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from '@/services/api';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -59,7 +60,6 @@ export function PlayerForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
   const token = localStorage.getItem('azores_score_token');
 
   // Validar formulário
