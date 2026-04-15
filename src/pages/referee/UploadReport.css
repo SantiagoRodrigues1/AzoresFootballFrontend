@@ -1,0 +1,128 @@
+/**
+ * UploadReport.css
+ * Estilos para a página de upload de relatório
+ */
+
+.match-info {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+}
+
+.match-venue {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
+/* File Upload */
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  border: 2px dashed var(--ion-color-medium);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-placeholder:hover {
+  border-color: var(--ion-color-primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.file-placeholder ion-icon {
+  font-size: 48px;
+  color: var(--ion-color-medium);
+  margin-bottom: 12px;
+}
+
+.placeholder-text {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+}
+
+.placeholder-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+/* File Selected */
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 8px;
+  border: 2px solid var(--ion-color-success);
+}
+
+.file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--ion-color-success);
+  color: white;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.file-icon ion-icon {
+  font-size: 24px;
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+/* Hint Text */
+.hint-text {
+  margin: 12px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .file-selected {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-placeholder {
+    padding: 32px 16px;
+  }
+}

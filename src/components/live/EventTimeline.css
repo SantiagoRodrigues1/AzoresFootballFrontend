@@ -1,0 +1,193 @@
+/* components/live/EventTimeline.css */
+.event-timeline {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.no-events {
+  text-align: center;
+  padding: 32px 16px;
+  color: #999;
+  font-size: 14px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.event-item {
+  display: flex;
+  gap: 12px;
+  position: relative;
+}
+
+.event-time {
+  min-width: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.minute {
+  background: #0f3460;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 45px;
+  text-align: center;
+}
+
+.event-connector {
+  position: absolute;
+  left: 22px;
+  top: 32px;
+  width: 2px;
+  height: 30px;
+  background: #ddd;
+}
+
+.event-item:last-child .event-connector {
+  display: none;
+}
+
+.event-content {
+  flex: 1;
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid #0f3460;
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.event-icon {
+  font-size: 20px;
+}
+
+.event-type {
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 14px;
+}
+
+.event-details {
+  margin: 8px 0;
+}
+
+.player-name {
+  margin: 0;
+  padding: 4px 8px;
+  background: white;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+.substitution-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.player-out {
+  margin: 0;
+  padding: 4px 8px;
+  background: rgba(255, 59, 48, 0.1);
+  border-left: 2px solid #ff3b30;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #ff3b30;
+  font-weight: 500;
+}
+
+.player-in {
+  margin: 0;
+  padding: 4px 8px;
+  background: rgba(76, 175, 80, 0.1);
+  border-left: 2px solid #4caf50;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.event-time-small {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 8px;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .event-timeline {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .timeline-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .event-item {
+    gap: 8px;
+  }
+
+  .event-time {
+    min-width: 45px;
+  }
+
+  .minute {
+    padding: 4px 8px;
+    font-size: 12px;
+    min-width: 40px;
+  }
+
+  .event-content {
+    padding: 10px;
+  }
+
+  .event-header {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .event-icon {
+    font-size: 18px;
+  }
+
+  .event-type {
+    font-size: 13px;
+  }
+
+  .player-name,
+  .player-out,
+  .player-in {
+    font-size: 12px;
+  }
+}

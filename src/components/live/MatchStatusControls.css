@@ -1,0 +1,121 @@
+/* components/live/MatchStatusControls.css */
+.status-controls {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.controls-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.control-btn > span:first-child {
+  font-size: 24px;
+}
+
+.control-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.control-btn:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+}
+
+.btn-halftime {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.btn-finish {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+.status-info {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #0f3460;
+}
+
+.status-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #1a1a2e;
+}
+
+.status-info strong {
+  color: #0f3460;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .status-controls {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .controls-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .controls-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .control-btn {
+    padding: 12px 10px;
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .control-btn > span:first-child {
+    font-size: 20px;
+  }
+
+  .status-info p {
+    font-size: 12px;
+  }
+}

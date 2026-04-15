@@ -1,0 +1,195 @@
+/* RefereeSignupForm.css */
+
+.referee-form-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.form-section {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-section h2 {
+  color: #3880ff;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 3px solid #3880ff;
+  padding-bottom: 10px;
+}
+
+.form-section h3 {
+  color: #555;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-area {
+  border: 3px dashed #3880ff;
+  border-radius: 15px;
+  padding: 50px 30px;
+  text-align: center;
+  margin: 30px 0;
+  background: linear-gradient(135deg, #f0f4ff 0%, #f9f9f9 100%);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: #0050d8;
+  background-color: #f0f4ff;
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(56, 128, 255, 0.2);
+}
+
+.upload-icon {
+  font-size: 64px;
+  color: #3880ff;
+  margin-bottom: 15px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.upload-area p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 10px 0;
+}
+
+.file-selected {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 15px;
+  border-left: 5px solid #28a745;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.file-selected p {
+  color: #155724;
+  font-weight: bold;
+  margin: 0;
+}
+
+.file-selected small {
+  color: #666;
+  display: block;
+  margin-top: 5px;
+}
+
+.info-box {
+  background: linear-gradient(135deg, #e7f3ff 0%, #f0f4ff 100%);
+  padding: 20px;
+  border-left: 5px solid #3880ff;
+  border-radius: 8px;
+  margin-top: 20px;
+  color: #333;
+}
+
+.info-box p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Ions */
+ion-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 15px;
+}
+
+ion-label {
+  color: #666;
+  font-weight: 500;
+}
+
+ion-input,
+ion-select {
+  --placeholder-color: #999;
+}
+
+/* Botões */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  padding: 0 20px;
+}
+
+.action-buttons ion-button {
+  flex: 1;
+  --border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  height: 50px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .referee-form-container {
+    padding: 10px;
+  }
+
+  .form-section {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .upload-area {
+    padding: 30px 20px;
+  }
+
+  .upload-icon {
+    font-size: 48px;
+  }
+}

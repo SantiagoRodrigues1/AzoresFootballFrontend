@@ -1,0 +1,46 @@
+/**
+ * RefereeMatches.css
+ * Estilos para a lista de jogos
+ */
+
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin: 0 0 12px 0;
+  animation: bounce 2s infinite;
+}
+
+.empty-message {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .matches-list {
+    gap: 10px;
+  }
+}

@@ -1,0 +1,283 @@
+/* components/live/MatchSummary.css */
+.match-summary {
+  width: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.summary-container {
+  max-width: 100%;
+}
+
+.summary-title {
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  color: #4caf50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.summary-section:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.section-title {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-event {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.summary-event:hover {
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateX(4px);
+}
+
+.event-minute {
+  font-weight: 700;
+  color: #64b5f6;
+  min-width: 35px;
+  text-align: center;
+  background: rgba(100, 181, 246, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.event-details {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.goal-event {
+  border-left: 3px solid #4caf50;
+}
+
+.goals-section .section-title {
+  color: #4caf50;
+}
+
+.main-player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  font-weight: 600;
+}
+
+.goal-icon {
+  font-size: 18px;
+}
+
+.assist-info {
+  width: 100%;
+  font-size: 12px;
+  color: #81c784;
+  font-style: italic;
+  padding-left: 28px;
+  margin-top: 4px;
+}
+
+/* Yellow Cards */
+.card-event {
+  border-left: 3px solid #ffc107;
+}
+
+.yellows-section .section-title {
+  color: #ffc107;
+}
+
+.reds-section .section-title {
+  color: #ff5252;
+}
+
+.card-icon {
+  font-size: 16px;
+}
+
+.player-name {
+  color: #e0e0e0;
+  flex: 1;
+}
+
+/* Red Cards */
+.reds-section {
+  border-left: 3px solid #ff5252;
+}
+
+/* Substitutions */
+.sub-event {
+  border-left: 3px solid #9c27b0;
+  flex-wrap: wrap;
+}
+
+.subs-section .section-title {
+  color: #9c27b0;
+}
+
+.event-details {
+  width: 100%;
+}
+
+.sub-out,
+.sub-in {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  flex: 1;
+}
+
+.sub-arrow {
+  color: #9c27b0;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+.sub-icon {
+  font-size: 14px;
+}
+
+/* Empty State */
+.empty-section {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.empty-message {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+/* Statistics Section */
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #4caf50;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .match-summary {
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .summary-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .summary-section {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .summary-event {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .event-minute {
+    min-width: 30px;
+    font-size: 12px;
+  }
+
+  .event-details {
+    font-size: 12px;
+  }
+
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+}
