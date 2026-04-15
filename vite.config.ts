@@ -1,4 +1,4 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
@@ -20,9 +20,7 @@ export default defineConfig(({ mode }) => ({
   },
 
   plugins: [
-    react(),
-    splitVendorChunkPlugin()
-    // ❌ removido componentTagger()
+    react()
   ].filter(Boolean),
 
   resolve: {
@@ -108,7 +106,8 @@ export default defineConfig(({ mode }) => ({
             return 'react-vendor';
           }
 
-          return 'vendor';
+          // Let Rollup decide placement for everything else
+          return undefined;
         }
       }
     }
