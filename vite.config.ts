@@ -1,7 +1,8 @@
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
+
+// ❌ removido: lovable-tagger (não existe no projeto)
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -10,25 +11,33 @@ export default defineConfig(({ mode }) => ({
     port: 8000,
     strictPort: true,
     watch: {
-      ignored: ['**/.env*'], // <-- Ignora arquivos .env para não reiniciar constantemente
+      ignored: ['**/.env*'],
     },
     hmr: {
       host: 'localhost',
       port: 8000,
     },
   },
-  plugins: [react(), splitVendorChunkPlugin(), mode === "development" && componentTagger()].filter(Boolean),
+
+  plugins: [
+    react(),
+    splitVendorChunkPlugin()
+    // ❌ removido componentTagger()
+  ].filter(Boolean),
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
   build: {
     chunkSizeWarningLimit: 1200,
     cssCodeSplit: true,
     reportCompressedSize: true,
     minify: mode === 'production' ? 'terser' : 'esbuild',
     target: 'es2020',
+
     ...(mode === 'production'
       ? {
           terserOptions: {
@@ -39,11 +48,13 @@ export default defineConfig(({ mode }) => ({
           }
         }
       : {}),
+
     rollupOptions: {
       output: {
         entryFileNames: 'assets/entry/[name]-[hash].js',
         chunkFileNames: 'assets/chunks/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash][extname]',
+
         manualChunks(id) {
           if (!id.includes('node_modules')) {
             return undefined;
