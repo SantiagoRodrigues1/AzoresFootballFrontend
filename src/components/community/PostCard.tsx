@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp, Flag, Heart, MessageCircle } from 'lucide-react';
@@ -23,6 +24,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, onLike, onComment, onReply, onCommentLike, onReport, onCommentReport, loadComments }: PostCardProps) {
+  const navigate = useNavigate();
   const [draft, setDraft] = useState('');
   const [isCommentsOpen, setIsCommentsOpen] = useState(post.commentsCount > 0 && post.commentsCount <= 2);
   const commentsQuery = useQuery({
@@ -41,13 +43,26 @@ export function PostCard({ post, onLike, onComment, onReply, onCommentLike, onRe
       className="rounded-[28px] border border-border/70 bg-card p-5 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]"
     >
       <div className="flex items-start gap-3">
-        <Avatar className="h-11 w-11 border border-border">
-          <AvatarFallback>{post.author?.name?.charAt(0) || 'U'}</AvatarFallback>
-        </Avatar>
+        <button
+          type="button"
+          className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`Ver perfil de ${post.author?.name || 'Utilizador'}`}
+          onClick={() => post.author?.id && navigate(`/community/profile/${post.author.id}`)}
+        >
+          <Avatar className="h-11 w-11 border border-border">
+            <AvatarFallback>{post.author?.name?.charAt(0) || 'U'}</AvatarFallback>
+          </Avatar>
+        </button>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-semibold text-foreground">{post.author?.name || 'Utilizador'}</h3>
+              <button
+                type="button"
+                className="text-left focus-visible:outline-none focus-visible:underline"
+                onClick={() => post.author?.id && navigate(`/community/profile/${post.author.id}`)}
+              >
+                <h3 className="font-semibold text-foreground hover:underline">{post.author?.name || 'Utilizador'}</h3>
+              </button>
               <p className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: pt })}
               </p>

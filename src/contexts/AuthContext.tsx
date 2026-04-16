@@ -161,7 +161,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(newToken);
       persistSession(userData, newToken);
       setUser(userData);
-      await refreshUser();
       return true;
     } catch (_error) {
       return false;
@@ -197,7 +196,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(newToken);
       persistSession(userData, newToken);
       setUser(userData);
-      await refreshUser();
       return true;
     } catch (_error) {
       return false;

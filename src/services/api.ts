@@ -31,7 +31,10 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
 
-    if (status === 401 || status === 403) {
+    // Only invalidate session on 401 (Unauthorized / token expired).
+    // 403 means Forbidden (e.g., billing ownership mismatch) and should NOT
+    // log the user out — the token is still valid.
+    if (status === 401) {
       invalidateSession(status);
     }
 

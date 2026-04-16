@@ -43,6 +43,7 @@ const RefereesPage = lazyNamed(() => import("@/pages/RefereesPage"), (module) =>
 const NewsPage = lazyNamed(() => import("@/pages/NewsPage"), (module) => module.NewsPage);
 const NewsDetailPage = lazyNamed(() => import("@/pages/NewsDetailPage"), (module) => module.NewsDetailPage);
 const CommunityPage = lazyNamed(() => import("@/pages/CommunityPage"), (module) => module.CommunityPage);
+const UserProfilePage = lazyNamed(() => import("@/pages/UserProfilePage"), (module) => module.UserProfilePage);
 const FavoritesPage = lazyNamed(() => import("@/pages/FavoritesPage"), (module) => module.FavoritesPage);
 const NotificationsPage = lazyNamed(() => import("@/pages/NotificationsPage"), (module) => module.NotificationsPage);
 const ContributionsPage = lazyNamed(() => import("@/pages/ContributionsPage"), (module) => module.ContributionsPage);
@@ -117,6 +118,7 @@ function AppRoutes() {
       <Route path="/news" element={withLayout(<NewsPage />)} />
       <Route path="/news/:newsId" element={withLayout(<NewsDetailPage />)} />
       <Route path="/community" element={withLayout(<CommunityPage />)} />
+      <Route path="/community/profile/:userId" element={withLayout(<UserProfilePage />)} />
       <Route path="/favorites" element={withLayout(<FavoritesPage />)} />
       <Route path="/notifications" element={withLayout(<NotificationsPage />)} />
       <Route path="/contributions" element={withLayout(<ContributionsPage />)} />
