@@ -2,21 +2,26 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const client = new MongoClient(uri);
-
+const uri = process.env.MONGO_URI;
+let client = null;
 let dbInstance = null;
 
 async function connectDB() {
   if (dbInstance) return dbInstance;
 
+  if (!uri) {
+    console.error('❌ MONGO_URI não está definida nas variáveis de ambiente.');
+    process.exit(1);
+  }
+
   try {
+    client = new MongoClient(uri);
     await client.connect();
-    dbInstance = client.db(); // usa o admin db para listar outras dbs
-    console.log('Conectado ao MongoDB!');
+    dbInstance = client.db();
+    console.log('✅ Conectado ao MongoDB Atlas - AzoresScorepap');
     return dbInstance;
   } catch (err) {
-    console.error('Erro ao conectar ao MongoDB:', err);
+    console.error('❌ Falha ao conectar ao MongoDB Atlas:', err.message);
     process.exit(1);
   }
 }
