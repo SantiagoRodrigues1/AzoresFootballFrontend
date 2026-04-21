@@ -85,7 +85,6 @@ const MatchDetails: React.FC = () => {
       const matchData = await matchService.getMatchById(matchId, token || undefined);
       setMatch(matchData);
     } catch (err) {
-      console.error('❌ Erro ao carregar jogo:', err);
       setError('Erro ao carregar detalhes do jogo. Tente novamente.');
     } finally {
       setLoading(false);
@@ -103,7 +102,6 @@ const MatchDetails: React.FC = () => {
       setShowConfirmDialog(false);
       loadMatch();
     } catch (err) {
-      console.error('❌ Erro ao confirmar presença:', err);
       setError('Erro ao confirmar presença. Tente novamente.');
     } finally {
       setLoading(false);
@@ -120,7 +118,6 @@ const MatchDetails: React.FC = () => {
       setSuccess('⚠️ Marcado como indisponível');
       loadMatch();
     } catch (err) {
-      console.error('❌ Erro ao marcar indisponível:', err);
       setError('Erro ao marcar indisponibilidade. Tente novamente.');
     } finally {
       setLoading(false);

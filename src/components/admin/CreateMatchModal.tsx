@@ -55,6 +55,24 @@ interface Match {
   status: 'scheduled' | 'live' | 'finished' | 'cancelled';
 }
 
+interface RefereeEntry {
+  referee: string;
+  tipo: string;
+}
+
+const REFEREE_TYPES = [
+  'Árbitro Principal',
+  'Assistente 1',
+  'Assistente 2',
+  '4º Árbitro',
+  'VAR',
+  'AVAR',
+  'Delegado',
+  'Observador',
+  'Cronometrista',
+  'Outro',
+];
+
 interface CreateMatchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -78,6 +96,12 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
   const [teams, setTeams] = useState<Team[]>([]);
   const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
   const [referees, setReferees] = useState<Referee[]>([]);
+  const [refereeTeam, setRefereeTeam] = useState<RefereeEntry[]>([
+    { referee: '', tipo: 'Árbitro Principal' },
+    { referee: '', tipo: 'Assistente 1' },
+    { referee: '', tipo: 'Assistente 2' },
+    { referee: '', tipo: '4º Árbitro' },
+  ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [teamsLoading, setTeamsLoading] = useState(true);
@@ -126,7 +150,6 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
         setCompetitions(Array.isArray(data) ? data : data.data || []);
       }
     } catch (err) {
-      console.error('Erro ao carregar competições:', err);
       setError('Erro ao carregar competições');
     } finally {
       setCompetitionsLoading(false);
@@ -142,7 +165,6 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
         setTeams(Array.isArray(data) ? data : data.data || []);
       }
     } catch (err) {
-      console.error('Erro ao carregar equipas:', err);
       setError('Erro ao carregar equipas');
     } finally {
       setTeamsLoading(false);
@@ -161,8 +183,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
         const data = await response.json();
         setReferees(Array.isArray(data) ? data : data.data || []);
       }
-    } catch (err) {
-      console.error('Erro ao carregar árbitros:', err);
+    } catch {
     }
   };
 
@@ -193,6 +214,18 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
       return;
     }
 
+    // Validar equipa de arbitragem (4 árbitros obrigatórios)
+    const allRefereesSelected = refereeTeam.every(r => r.referee && r.tipo);
+    if (!allRefereesSelected) {
+      setError('É obrigatório selecionar os 4 árbitros com as respetivas funções');
+      return;
+    }
+    const uniqueRefs = new Set(refereeTeam.map(r => r.referee));
+    if (uniqueRefs.size !== 4) {
+      setError('Não pode selecionar o mesmo árbitro mais de uma vez');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -218,7 +251,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
           date: dateTime.toISOString(),
           time: formData.time,
           competition: formData.competition,
-          referee: formData.referee || null,
+          refereeTeam,
           stadium: formData.stadium || '',
           homeScore: 0,
           awayScore: 0,
@@ -241,11 +274,16 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
         stadium: '',
         status: 'scheduled',
       });
+      setRefereeTeam([
+        { referee: '', tipo: 'Árbitro Principal' },
+        { referee: '', tipo: 'Árbitro Assistente 1' },
+        { referee: '', tipo: 'Árbitro Assistente 2' },
+        { referee: '', tipo: 'Quarto Árbitro' },
+      ]);
 
       onOpenChange(false);
       onSave?.();
     } catch (err) {
-      console.error('Erro ao criar jogo:', err);
       setError(err instanceof Error ? err.message : 'Erro ao criar jogo');
     } finally {
       setLoading(false);
@@ -274,7 +312,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
 
         <IonList inset>
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Campeonato *</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Campeonato <span className="text-red-500">*</span></IonLabel>
             <IonSelect
               value={formData.competition}
               onIonChange={(e) => setFormData({ ...formData, competition: e.detail.value })}
@@ -291,7 +329,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Equipa da Casa *</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Equipa da Casa <span className="text-red-500">*</span></IonLabel>
             <IonSelect
               value={formData.homeTeam}
               onIonChange={(e) => setFormData({ ...formData, homeTeam: e.detail.value })}
@@ -308,7 +346,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Equipa Visitante *</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Equipa Visitante <span className="text-red-500">*</span></IonLabel>
             <IonSelect
               value={formData.awayTeam}
               onIonChange={(e) => setFormData({ ...formData, awayTeam: e.detail.value })}
@@ -325,7 +363,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Data *</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Data <span className="text-red-500">*</span></IonLabel>
             <IonInput
               type="date"
               value={formData.date}
@@ -336,7 +374,7 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Hora *</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Hora <span className="text-red-500">*</span></IonLabel>
             <IonInput
               type="time"
               value={formData.time}
@@ -356,24 +394,58 @@ export function CreateMatchModal({ open, onOpenChange, token, onSave }: CreateMa
               className="font-medium"
             />
           </IonItem>
+        </IonList>
 
-          <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Árbitro</IonLabel>
-            <IonSelect
-              value={formData.referee}
-              onIonChange={(e) => setFormData({ ...formData, referee: e.detail.value })}
-              disabled={loading}
-              placeholder="Opcional"
-              className="font-medium"
-            >
-              {referees.map((ref) => (
-                <IonSelectOption key={ref._id || ref.id} value={ref._id || ref.id}>
-                  {ref.nome || ref.name}
-                </IonSelectOption>
-              ))}
-            </IonSelect>
-          </IonItem>
+        {/* Equipa de Arbitragem - 4 Árbitros obrigatórios */}
+        <div className="mt-4 mb-2 px-1">
+          <h3 className="font-bold text-base">Equipa de Arbitragem <span className="text-red-500">*</span></h3>
+          <p className="text-xs text-muted-foreground mt-1">Selecione 4 árbitros diferentes com as respetivas funções</p>
+        </div>
+        <IonList inset>
+          {refereeTeam.map((entry, idx) => (
+            <div key={idx}>
+              <IonItem>
+                <IonLabel position="stacked" className="font-semibold">Função {idx + 1}</IonLabel>
+                <IonSelect
+                  value={entry.tipo}
+                  onIonChange={(e) => {
+                    const updated = [...refereeTeam];
+                    updated[idx] = { ...updated[idx], tipo: e.detail.value };
+                    setRefereeTeam(updated);
+                  }}
+                  disabled={loading}
+                  className="font-medium"
+                >
+                  {REFEREE_TYPES.map((t) => (
+                    <IonSelectOption key={t} value={t}>{t}</IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked" className="font-semibold">Árbitro {idx + 1} <span className="text-red-500">*</span></IonLabel>
+                <IonSelect
+                  value={entry.referee}
+                  onIonChange={(e) => {
+                    const updated = [...refereeTeam];
+                    updated[idx] = { ...updated[idx], referee: e.detail.value };
+                    setRefereeTeam(updated);
+                  }}
+                  disabled={loading}
+                  placeholder="Selecionar árbitro"
+                  className="font-medium"
+                >
+                  {referees.map((ref) => (
+                    <IonSelectOption key={ref._id || ref.id} value={ref._id || ref.id}>
+                      {ref.nome || ref.name}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+            </div>
+          ))}
+        </IonList>
 
+        <IonList inset>
           <IonItem>
             <IonLabel position="stacked" className="font-semibold">Status</IonLabel>
             <IonSelect

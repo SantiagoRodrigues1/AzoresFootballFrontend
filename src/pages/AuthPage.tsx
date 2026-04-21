@@ -1,25 +1,16 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
 type AuthMode = 'login' | 'register';
 
-const userRoleLabels: Record<UserRole, { label: string; description: string; icon: string }> = {
-  fan: { label: 'Adepto', description: 'Seguir jogos, equipas e interagir', icon: '⚽' },
-  referee: { label: 'Árbitro', description: 'Atualizar relatórios de jogo', icon: '🟨' },
-  club_manager: { label: 'Responsável de Clube', description: 'Gerir equipa e escalações', icon: '🏟️' },
-  admin: { label: 'Administrador', description: 'Gerir toda a aplicação', icon: '⚙️' },
-};
-
 export function AuthPage() {
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [selectedRole, setSelectedRole] = useState<UserRole>('fan');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showGDPR, setShowGDPR] = useState(false);
 
@@ -37,7 +28,7 @@ export function AuthPage() {
       if (mode === 'login') {
         success = await login(email, password);
       } else {
-        success = await register(email, password, name, selectedRole);
+        success = await register(email, password, name);
       }
 
       if (success) {
@@ -47,7 +38,14 @@ export function AuthPage() {
             ? 'Autenticação bem-sucedida.'
             : 'A sua conta foi criada com sucesso.',
         });
-        navigate('/');
+        // Árbitros vão para o dashboard de arbitragem
+        const stored = localStorage.getItem('azores_score_user');
+        const parsed = stored ? JSON.parse(stored) : null;
+        if (parsed?.role === 'referee') {
+          navigate('/referee/dashboard');
+        } else {
+          navigate('/');
+        }
       } else {
         toast({
           title: 'Erro',
@@ -71,7 +69,7 @@ export function AuthPage() {
       {/* Header */}
       <div className="bg-ocean py-8 px-4 pb-16">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-          <h1 className="text-2xl font-bold text-primary-foreground mb-1">🏝️ AzoresScore</h1>
+          <h1 className="text-2xl font-bold text-primary-foreground mb-1">AzoresScore</h1>
           <p className="text-primary-foreground/80 text-sm">Futebol Açoriano em Direto</p>
         </motion.div>
       </div>
@@ -111,22 +109,6 @@ export function AuthPage() {
           </div>
 
           {mode === 'register' && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-              <label className="block text-sm font-medium text-foreground mb-3">Tipo de Utilizador</label>
-              <div className="grid grid-cols-2 gap-2">
-                {(Object.keys(userRoleLabels) as UserRole[]).map(role => (
-                  <motion.button key={role} type="button" whileTap={{ scale: 0.95 }} onClick={() => setSelectedRole(role)}
-                    className={`p-3 rounded-xl border-2 text-left transition-all ${selectedRole === role ? 'border-primary bg-primary/10' : 'border-border bg-muted/50 hover:border-muted-foreground'}`}>
-                    <span className="text-xl mb-1 block">{userRoleLabels[role].icon}</span>
-                    <span className={`text-sm font-medium block ${selectedRole === role ? 'text-primary' : 'text-foreground'}`}>{userRoleLabels[role].label}</span>
-                    <span className="text-xs text-muted-foreground">{userRoleLabels[role].description}</span>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {mode === 'register' && (
             <div className="flex items-start gap-3">
               <input type="checkbox" id="gdpr" required className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary" />
               <label htmlFor="gdpr" className="text-xs text-muted-foreground">Li e aceito a <button type="button" onClick={() => setShowGDPR(true)} className="text-primary underline">Política de Privacidade</button> e os Termos de Utilização em conformidade com o RGPD.</label>
@@ -136,15 +118,11 @@ export function AuthPage() {
           <motion.button type="submit" disabled={isSubmitting} whileTap={{ scale: 0.98 }} className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-semibold shadow-glow-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all">
             {isSubmitting ? <span className="flex items-center justify-center gap-2"><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>A processar...</span> : mode === 'login' ? 'Entrar' : 'Criar Conta'}
           </motion.button>
-
-          {mode === 'login' && (
-            <p className="text-xs text-center text-muted-foreground mt-4">💡 Dica: Use emails com "admin", "arbitro" ou "clube" para testar diferentes tipos de utilizador</p>
-          )}
         </form>
       </motion.div>
 
       {/* Footer */}
-      <div className="text-center mt-8 pb-8"><p className="text-xs text-muted-foreground">Feito com 💙 para os Açores 🏝️</p></div>
+      <div className="text-center mt-8 pb-8"><p className="text-xs text-muted-foreground">AzoresScore · Futebol Açoriano</p></div>
 
       {/* Modal RGPD */}
       <AnimatePresence>

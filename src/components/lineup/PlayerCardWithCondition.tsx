@@ -40,8 +40,8 @@ export const PlayerCardWithCondition: React.FC<PlayerCardWithConditionProps> = (
       onClick={handleToggle}
       className={`rounded-lg p-3 cursor-pointer transition-all duration-200 border-2 ${
         isSelected
-          ? 'border-green-500 bg-green-50 shadow-md'
-          : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow'
+          ? 'border-green-500 bg-green-50 dark:bg-green-950/20 shadow-md'
+          : 'border-border bg-card hover:border-muted-foreground/30 hover:shadow'
       } ${condition === 'injured' || condition === 'suspended' ? 'opacity-60' : ''}`}
     >
       <div className="flex items-start justify-between mb-2">
@@ -55,7 +55,7 @@ export const PlayerCardWithCondition: React.FC<PlayerCardWithConditionProps> = (
               {isCaptain && <span title="Capitão">👑</span>}
               {isViceCaptain && <span title="Vice-Capitão">🛡️</span>}
             </div>
-            <div className="text-xs text-gray-600">{position}</div>
+            <div className="text-xs text-muted-foreground">{position}</div>
           </div>
         </div>
 
@@ -72,7 +72,7 @@ export const PlayerCardWithCondition: React.FC<PlayerCardWithConditionProps> = (
 
       {/* Condition info if not available */}
       {condition !== 'available' && (
-        <div className="text-xs text-gray-600 px-1">
+        <div className="text-xs text-muted-foreground px-1">
           <PlayerConditionBadge status={condition} showLabel />
         </div>
       )}

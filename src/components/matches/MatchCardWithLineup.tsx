@@ -138,8 +138,7 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
         } else {
           setHasLineup(false);
         }
-      } catch (err) {
-        console.error('Erro ao verificar plantels:', err);
+      } catch {
         setHasLineup(false);
       } finally {
         setLoadingLineup(false);
@@ -153,7 +152,7 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
     <>
       <motion.div
         whileHover={{ y: -8 }}
-        className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all bg-white border border-gray-200"
+        className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all bg-card border border-border"
       >
         {/* Status Badge - Top Left */}
         <motion.div
@@ -165,7 +164,7 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
         </motion.div>
 
         {/* Date Badge - Top Right */}
-        <div className="absolute top-3 right-3 z-20 bg-white bg-opacity-90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-full font-semibold text-xs shadow-md border border-gray-200">
+        <div className="absolute top-3 right-3 z-20 bg-card/90 backdrop-blur-sm text-foreground px-3 py-1.5 rounded-full font-semibold text-xs shadow-md border border-border">
           📅 {dateStr} • {timeStr}
         </div>
 
@@ -182,8 +181,8 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
               <div className="flex items-center gap-3 flex-1">
                 <span className="text-4xl">{getTeamEmoji(homeTeamName)}</span>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-600 font-medium">Casa</p>
-                  <p className="text-lg font-bold text-gray-900 line-clamp-2">{homeTeamName}</p>
+                  <p className="text-sm text-muted-foreground font-medium">Casa</p>
+                  <p className="text-lg font-bold text-foreground line-clamp-2">{homeTeamName}</p>
                 </div>
               </div>
 
@@ -200,9 +199,9 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
 
             {/* Center Divider */}
             <div className="flex items-center justify-center my-4">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-              <span className="px-3 text-gray-400 font-bold">VS</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              <span className="px-3 text-muted-foreground font-bold">VS</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
             {/* Away Team */}
@@ -214,8 +213,8 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
               <div className="flex items-center gap-3 flex-1">
                 <span className="text-4xl">{getTeamEmoji(awayTeamName)}</span>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-600 font-medium">Fora</p>
-                  <p className="text-lg font-bold text-gray-900 line-clamp-2">{awayTeamName}</p>
+                  <p className="text-sm text-muted-foreground font-medium">Fora</p>
+                  <p className="text-lg font-bold text-foreground line-clamp-2">{awayTeamName}</p>
                 </div>
               </div>
 
@@ -233,14 +232,14 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
 
             {!isCompleted && (
               <div className="mt-4 text-center">
-                <p className="text-3xl font-bold text-gray-800">- : -</p>
-                <p className="text-xs text-gray-500 mt-1">Jogo não iniciado</p>
+                <p className="text-3xl font-bold text-foreground">- : -</p>
+                <p className="text-xs text-muted-foreground mt-1">Jogo não iniciado</p>
               </div>
             )}
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4" />
+          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-4" />
 
           {/* Lineup Section */}
           <div className="space-y-3">
@@ -248,10 +247,10 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg"
               >
                 <Users className="w-5 h-5 text-blue-600 animate-spin" />
-                <span className="text-sm font-semibold text-blue-700">Carregando escalação...</span>
+                <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">Carregando escalação...</span>
               </motion.div>
             ) : hasLineup ? (
               <motion.button
@@ -275,22 +274,22 @@ export function MatchCardWithLineup({ match, token }: MatchCardWithLineupProps) 
                 </motion.div>
               </motion.button>
             ) : (
-              <div className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg border border-gray-300">
-                <Users className="w-5 h-5 text-gray-500" />
-                <span className="text-sm font-semibold text-gray-700">Escalação em breve</span>
+              <div className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg border border-border">
+                <Users className="w-5 h-5 text-muted-foreground" />
+                <span className="text-sm font-semibold text-muted-foreground">Escalação em breve</span>
               </div>
             )}
 
             {/* Extra Info */}
             <div className="flex gap-2 text-xs font-semibold">
               {match.competicao && (
-                <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg">
+                <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg">
                   <Trophy className="w-4 h-4" />
                   {match.competicao}
                 </div>
               )}
               {match.estadio && (
-                <div className="flex items-center gap-1 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg">
+                <div className="flex items-center gap-1 px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg">
                   🏟️ {match.estadio}
                 </div>
               )}

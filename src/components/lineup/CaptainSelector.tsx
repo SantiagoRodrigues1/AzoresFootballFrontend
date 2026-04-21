@@ -40,8 +40,8 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200 mb-4">
-      <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg p-4 border border-blue-200 dark:border-blue-800 mb-4">
+      <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
         <Crown className="w-4 h-4 text-amber-600" />
         Capitães & Vice-Capitão
       </h3>
@@ -49,8 +49,8 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
       <div className="grid grid-cols-2 gap-3">
         {/* Capitão */}
         <div className="relative">
-          <label className="text-xs font-semibold text-gray-600 uppercase mb-1 block">
-            👑 Capitão
+          <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">
+            Capitão
           </label>
           <div className="relative">
             <Button
@@ -68,9 +68,9 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
             </Button>
 
             {showCaptainDropdown && isEditing && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg z-50">
                 <button
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 border-b"
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-muted border-b border-border"
                   onClick={() => {
                     onCaptainChange(null);
                     setShowCaptainDropdown(false);
@@ -81,14 +81,14 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
                 {players.map(player => (
                   <button
                     key={player.id}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-amber-50 border-b last:border-0"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-amber-50 dark:hover:bg-amber-950/30 border-b last:border-0 border-border"
                     onClick={() => {
                       onCaptainChange(player.id);
                       setShowCaptainDropdown(false);
                     }}
                   >
                     <div className="font-semibold">#{player.number} {player.name}</div>
-                    <div className="text-xs text-gray-500">{player.position}</div>
+                    <div className="text-xs text-muted-foreground">{player.position}</div>
                   </button>
                 ))}
               </div>
@@ -98,8 +98,8 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
 
         {/* Vice-Capitão */}
         <div className="relative">
-          <label className="text-xs font-semibold text-gray-600 uppercase mb-1 block">
-            🛡️ Vice-Capitão
+          <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">
+            Vice-Capitão
           </label>
           <div className="relative">
             <Button
@@ -117,9 +117,9 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
             </Button>
 
             {showViceCaptainDropdown && isEditing && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg z-50">
                 <button
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 border-b"
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-muted border-b border-border"
                   onClick={() => {
                     onViceCaptainChange(null);
                     setShowViceCaptainDropdown(false);
@@ -130,14 +130,14 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
                 {players.map(player => (
                   <button
                     key={player.id}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 border-b last:border-0"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 dark:hover:bg-blue-950/30 border-b last:border-0 border-border"
                     onClick={() => {
                       onViceCaptainChange(player.id);
                       setShowViceCaptainDropdown(false);
                     }}
                   >
                     <div className="font-semibold">#{player.number} {player.name}</div>
-                    <div className="text-xs text-gray-500">{player.position}</div>
+                    <div className="text-xs text-muted-foreground">{player.position}</div>
                   </button>
                 ))}
               </div>
@@ -147,9 +147,9 @@ export const CaptainSelector: React.FC<CaptainSelectorProps> = ({
       </div>
 
       {currentCaptain && (
-        <div className="mt-3 pt-3 border-t border-blue-200 text-xs text-gray-600">
-          <div className="font-semibold">👑 Capitão Designado</div>
-          <div className="text-gray-700">{getCaptainName(currentCaptain)}</div>
+        <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800 text-xs text-muted-foreground">
+          <div className="font-semibold">Capitão Designado</div>
+          <div className="text-foreground">{getCaptainName(currentCaptain)}</div>
         </div>
       )}
     </div>

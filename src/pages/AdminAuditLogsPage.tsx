@@ -76,7 +76,7 @@ export function AdminAuditLogsPage() {
 
   if (loading && logs.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-background p-4 flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl animate-spin mb-4">⏳</div>
           <p className="text-muted-foreground">A carregar logs...</p>
@@ -86,7 +86,7 @@ export function AdminAuditLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <header className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 sticky top-0 z-50 shadow-lg safe-top rounded-b-3xl overflow-hidden">
         <div className="px-4 pt-6 pb-6">
@@ -136,7 +136,7 @@ export function AdminAuditLogsPage() {
             {logs.map((log) => (
               <div
                 key={log._id}
-                className="bg-white rounded-xl p-4 shadow-md border border-slate-200 hover:shadow-lg transition-all"
+                className="bg-card rounded-xl p-4 shadow-md border border-border hover:shadow-lg transition-all"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex gap-3 flex-1">

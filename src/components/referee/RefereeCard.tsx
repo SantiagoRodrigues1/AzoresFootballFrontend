@@ -59,7 +59,7 @@ const RefereeCard: React.FC<RefereeCardProps> = ({
           <IonRow className="ion-align-items-center ion-margin-bottom">
             <IonCol size="auto">
               {referee.avatar ? (
-                <img src={referee.avatar} alt={referee.name} className="referee-avatar" />
+                <img src={referee.avatar} alt={referee.name} className="referee-avatar" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
               ) : (
                 <div className="referee-avatar-placeholder">
                   {referee.name.charAt(0).toUpperCase()}

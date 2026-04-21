@@ -102,15 +102,15 @@ export function DoubleLineupFlashscore({
         className={`flex-1 ${isHome ? 'pr-2' : 'pl-2'}`}
       >
         {/* Team Header */}
-        <div className={`text-center mb-4 pb-3 border-b-2 ${isHome ? 'border-blue-200' : 'border-red-200'}`}>
-          <h2 className={`text-xl font-black ${isHome ? 'text-blue-900' : 'text-red-900'}`}>
+        <div className={`text-center mb-4 pb-3 border-b-2 ${isHome ? 'border-blue-400/50' : 'border-red-400/50'}`}>
+          <h2 className={`text-xl font-black ${isHome ? 'text-blue-200' : 'text-red-200'}`}>
             {team.name}
           </h2>
-          <p className="text-xs text-gray-600">Formação {team.formation}</p>
+          <p className="text-xs text-slate-400">Formação {team.formation}</p>
         </div>
 
         {/* Formation Label */}
-        <div className={`text-center mb-3 px-2 py-1 rounded-lg ${isHome ? 'bg-blue-100' : 'bg-red-100'}`}>
+        <div className={`text-center mb-3 px-2 py-1 rounded-lg ${isHome ? 'bg-blue-900/40' : 'bg-red-900/40'}`}>
           <p className={`text-xs font-bold ${isHome ? 'text-blue-700' : 'text-red-700'}`}>
             {formationData?.name || team.formation}
           </p>
@@ -136,8 +136,8 @@ export function DoubleLineupFlashscore({
 
         {/* Substitutes - Compact view */}
         {team.substitutes.length > 0 && (
-          <div className="mt-4 pt-4 border-t-2 border-gray-200">
-            <p className="text-xs font-bold text-gray-600 text-center mb-2">Suplentes ({team.substitutes.length})</p>
+          <div className="mt-4 pt-4 border-t-2 border-slate-600">
+            <p className="text-xs font-bold text-slate-400 text-center mb-2">Suplentes ({team.substitutes.length})</p>
             <div className="grid grid-cols-3 gap-2">
               {team.substitutes.map((sub, idx) => (
                 <motion.div
@@ -179,7 +179,7 @@ export function DoubleLineupFlashscore({
     >
       {/* Main Header */}
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-black text-white mb-2">⚽ Confronto de Escalações</h1>
+        <h1 className="text-3xl font-black text-white mb-2">Confronto de Escalações</h1>
         <p className="text-sm text-slate-300">Comparação de formações e jogadores</p>
       </div>
 

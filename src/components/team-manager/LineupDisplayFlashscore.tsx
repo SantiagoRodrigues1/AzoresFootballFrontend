@@ -60,7 +60,7 @@ export function LineupDisplayFlashscore({
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-4xl font-black text-white">⚽ Escalação Completa</h2>
+          <h2 className="text-4xl font-black text-white">Escalação Completa</h2>
           <span className="text-sm font-bold px-4 py-2 bg-gradient-to-r from-primary to-blue-500 text-white rounded-full">
             Formação {formation}
           </span>

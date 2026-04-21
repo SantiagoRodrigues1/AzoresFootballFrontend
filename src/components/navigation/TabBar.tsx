@@ -2,22 +2,23 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { isClubManagerRole } from '@/utils/access';
+import { Home, Trophy, MessageSquare, Building2, MoreHorizontal, Users } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface TabItem {
   path: string;
   label: string;
-  icon: string;
-  activeIcon: string;
+  icon: LucideIcon;
   requiresRole?: string;
 }
 
 const TAB_ITEMS: TabItem[] = [
-  { path: '/', label: 'Home', icon: '🏠', activeIcon: '🏡' },
-  { path: '/my-matches', label: 'Os Meus Jogos', icon: '👥', activeIcon: '👥', requiresRole: 'team_manager' },
-  { path: '/matches', label: 'Jogos', icon: '⚽', activeIcon: '⚽' },
-  { path: '/community', label: 'Comunidade', icon: '💬', activeIcon: '💬' },
-  { path: '/teams', label: 'Equipas', icon: '🏟️', activeIcon: '🏟️' },
-  { path: '/more', label: 'Mais', icon: '☰', activeIcon: '☰' },
+  { path: '/', label: 'Home', icon: Home },
+  { path: '/my-matches', label: 'Os Meus Jogos', icon: Users, requiresRole: 'team_manager' },
+  { path: '/matches', label: 'Jogos', icon: Trophy },
+  { path: '/community', label: 'Comunidade', icon: MessageSquare },
+  { path: '/teams', label: 'Equipas', icon: Building2 },
+  { path: '/more', label: 'Mais', icon: MoreHorizontal },
 ];
 
 export function TabBar() {
@@ -52,12 +53,12 @@ export function TabBar() {
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
-              <motion.span
+              <motion.div
                 animate={{ scale: isActive ? 1.1 : 1 }}
-                className={`text-xl mb-0.5 ${isActive ? '' : 'grayscale opacity-60'}`}
+                className={`mb-0.5 ${isActive ? 'text-primary' : 'text-muted-foreground opacity-60'}`}
               >
-                {isActive ? tab.activeIcon : tab.icon}
-              </motion.span>
+                <tab.icon className="w-5 h-5" />
+              </motion.div>
               <span className={`text-[10px] font-medium ${
                 isActive ? 'text-primary' : 'text-muted-foreground'
               }`}>

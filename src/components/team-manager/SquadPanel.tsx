@@ -16,30 +16,30 @@ export function SquadPanel({ starters, bench, available }: SquadPanelProps) {
       className="grid grid-cols-1 md:grid-cols-3 gap-4"
     >
       {/* Starting XI */}
-      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-300">
+      <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-950/20 rounded-xl p-4 border-2 border-green-300 dark:border-green-800">
         <div className="flex items-center gap-2 mb-4">
           <Check className="w-5 h-5 text-green-600" />
-          <h3 className="font-bold text-green-900">
+          <h3 className="font-bold text-green-900 dark:text-green-200">
             Titulares ({starters.length}/11)
           </h3>
         </div>
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {starters.length === 0 ? (
-            <p className="text-sm text-green-700 text-center py-4">Nenhum titular selecionado</p>
+            <p className="text-sm text-green-700 dark:text-green-400 text-center py-4">Nenhum titular selecionado</p>
           ) : (
             starters.map((player, index) => (
               <motion.div
                 key={`starter-${player.playerId || index}`}
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                className="bg-white rounded-lg p-3 border border-green-200"
+                className="bg-card rounded-lg p-3 border border-green-200 dark:border-green-800"
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-semibold text-sm text-foreground">
                       {player.playerName}
                     </div>
-                    <div className="text-xs text-gray-500">#{player.playerNumber}</div>
+                    <div className="text-xs text-muted-foreground">#{player.playerNumber}</div>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold">
                     {player.playerNumber}
@@ -52,30 +52,30 @@ export function SquadPanel({ starters, bench, available }: SquadPanelProps) {
       </div>
 
       {/* Bench */}
-      <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border-2 border-yellow-300">
+      <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/30 dark:to-yellow-950/20 rounded-xl p-4 border-2 border-yellow-300 dark:border-yellow-800">
         <div className="flex items-center gap-2 mb-4">
           <AlertCircle className="w-5 h-5 text-yellow-600" />
-          <h3 className="font-bold text-yellow-900">
+          <h3 className="font-bold text-yellow-900 dark:text-yellow-200">
             Suplentes ({bench.length}/8)
           </h3>
         </div>
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {bench.length === 0 ? (
-            <p className="text-sm text-yellow-700 text-center py-4">Nenhum suplente selecionado</p>
+            <p className="text-sm text-yellow-700 dark:text-yellow-400 text-center py-4">Nenhum suplente selecionado</p>
           ) : (
             bench.map((player, index) => (
               <motion.div
                 key={`bench-${player.playerId || index}`}
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                className="bg-white rounded-lg p-3 border border-yellow-200"
+                className="bg-card rounded-lg p-3 border border-yellow-200 dark:border-yellow-800"
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-semibold text-sm text-foreground">
                       {player.playerName}
                     </div>
-                    <div className="text-xs text-gray-500">#{player.playerNumber}</div>
+                    <div className="text-xs text-muted-foreground">#{player.playerNumber}</div>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs font-bold">
                     {player.playerNumber}
@@ -88,30 +88,30 @@ export function SquadPanel({ starters, bench, available }: SquadPanelProps) {
       </div>
 
       {/* Available */}
-      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-300">
+      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-950/20 rounded-xl p-4 border-2 border-blue-300 dark:border-blue-800">
         <div className="flex items-center gap-2 mb-4">
           <Users className="w-5 h-5 text-blue-600" />
-          <h3 className="font-bold text-blue-900">
+          <h3 className="font-bold text-blue-900 dark:text-blue-200">
             Disponíveis ({available.length})
           </h3>
         </div>
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {available.length === 0 ? (
-            <p className="text-sm text-blue-700 text-center py-4">Todos os jogadores seleccionados</p>
+            <p className="text-sm text-blue-700 dark:text-blue-400 text-center py-4">Todos os jogadores seleccionados</p>
           ) : (
             available.map((player, index) => (
               <motion.div
                 key={`available-${player.playerId || index}`}
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                className="bg-white rounded-lg p-3 border border-blue-200"
+                className="bg-card rounded-lg p-3 border border-blue-200 dark:border-blue-800"
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-semibold text-sm text-foreground">
                       {player.playerName}
                     </div>
-                    <div className="text-xs text-gray-500">#{player.playerNumber}</div>
+                    <div className="text-xs text-muted-foreground">#{player.playerNumber}</div>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
                     {player.playerNumber}

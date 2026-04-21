@@ -12,8 +12,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
-import { liveMatchService, Match, MatchEvent } from '@/services/liveMatchService';
+import { liveMatchService, Match } from '@/services/liveMatchService';
 import { ScoreHeader } from '@/components/live/ScoreHeader';
 import { EventTimeline } from '@/components/live/EventTimeline';
 import { MatchSummary } from '@/components/live/MatchSummary';
@@ -22,7 +21,6 @@ import './MatchDetailsPage.css';
 export const MatchDetailsPage: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
   const navigate = useNavigate();
-  const { token } = useAuth();
 
   const [match, setMatch] = useState<Match | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,18 +29,18 @@ export const MatchDetailsPage: React.FC = () => {
   // Fetch match details
   useEffect(() => {
     const fetchMatch = async () => {
-      if (!matchId || !token) {
-        setError('ID do jogo ou autenticação inválida');
+      if (!matchId) {
+        setError('ID do jogo inválido');
         setIsLoading(false);
         return;
       }
 
       try {
         setError('');
-        const data = await liveMatchService.getMatchDetails(matchId);
+        const { match: data } = await liveMatchService.getMatchDetails(matchId);
         setMatch(data);
-      } catch (err: any) {
-        const errorMsg = err.message || 'Erro ao carregar jogo';
+      } catch (err: unknown) {
+        const errorMsg = err instanceof Error ? err.message : 'Erro ao carregar jogo';
         setError(errorMsg);
       } finally {
         setIsLoading(false);
@@ -50,7 +48,7 @@ export const MatchDetailsPage: React.FC = () => {
     };
 
     fetchMatch();
-  }, [matchId, token]);
+  }, [matchId]);
 
   // Loading state
   if (isLoading) {

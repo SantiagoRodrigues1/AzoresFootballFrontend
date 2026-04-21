@@ -130,8 +130,7 @@ export const LiveMatchController: React.FC<LiveMatchControllerProps> = ({
       playSound(newEvent.description);
       setShowEventModal(false);
       setEventType(null);
-    } catch (error) {
-      console.error('Erro ao adicionar evento:', error);
+    } catch {
     }
   };
 

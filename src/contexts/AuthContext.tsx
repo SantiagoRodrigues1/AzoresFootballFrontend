@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { api } from '@/services/api';
-import { User, UserRole } from '@/types';
+import { User } from '@/types';
 import { AUTH_INVALIDATED_EVENT } from '@/utils/authSession';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string, role: UserRole) => Promise<boolean>;
+  register: (email: string, password: string, name: string) => Promise<boolean>;
   refreshUser: () => Promise<User | null>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -163,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userData);
       return true;
     } catch (_error) {
+      console.error('[AuthContext] Login error:', _error);
       return false;
     } finally {
       setIsLoading(false);
@@ -173,12 +174,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (
     email: string,
     password: string,
-    name: string,
-    role: UserRole
+    name: string
   ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/register', { email, password, name, role });
+      const response = await api.post('/auth/register', { email, password, name });
       const data = response.data;
 
       if (!data.success) {

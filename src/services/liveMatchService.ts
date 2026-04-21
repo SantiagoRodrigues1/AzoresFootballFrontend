@@ -214,24 +214,26 @@ class LiveMatchService {
   }
 
   /**
-   * Obtém detalhes do jogo
+   * Obtém detalhes do jogo.
+   * Devolve o match e a flag canEdit calculada pelo servidor.
    */
-  async getMatchDetails(matchId: string): Promise<Match> {
+  async getMatchDetails(matchId: string): Promise<{ match: Match; canEdit: boolean }> {
     try {
       const token = localStorage.getItem('azores_score_token');
-      if (!token) {
-        throw new Error('Token não encontrado. Faça login novamente.');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
 
       const response = await this.api.get<{
         success: boolean;
         data: Match;
-      }>(`/live-match/${matchId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data.data;
+        permissions?: { canEdit: boolean };
+      }>(`/live-match/${matchId}`, { headers });
+      return {
+        match: response.data.data,
+        canEdit: response.data.permissions?.canEdit ?? false,
+      };
     } catch (error) {
       this.handleError(error, 'Erro ao obter detalhes do jogo');
     }
@@ -305,9 +307,8 @@ class LiveMatchService {
   /**
    * Handler de erros
    */
-  private handleError(error: any, defaultMessage: string): never {
-    const message = error.response?.data?.message || defaultMessage;
-    console.error(message, error);
+  private handleError(error: unknown, defaultMessage: string): never {
+    const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || defaultMessage;
     throw new Error(message);
   }
 }

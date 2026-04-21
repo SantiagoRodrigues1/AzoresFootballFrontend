@@ -95,7 +95,7 @@ const RefereePendingApproval: React.FC = () => {
           {/* DADOS ENVIADOS */}
           <IonCard className="info-card">
             <IonCardHeader>
-              <IonCardTitle>📋 Dados Submetidos</IonCardTitle>
+              <IonCardTitle>Dados Submetidos</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
               <div className="info-item">

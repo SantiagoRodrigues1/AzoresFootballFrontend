@@ -1,6 +1,6 @@
 // src/pages/AdminDashboardPage.tsx
 import { useEffect, useState } from 'react';
-import { BarChart3, Users, Trophy, Zap, TrendingUp, AlertCircle } from 'lucide-react';
+import { BarChart3, Users, Trophy, Zap, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { API_URL } from '@/services/api';
 import { IonButton } from '@ionic/react';
@@ -47,7 +47,7 @@ export function AdminDashboardPage() {
     return (
       <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,116,144,0.12),_transparent_35%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--background)))] p-4 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl animate-spin mb-4">⚙️</div>
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-4" />
           <p className="text-muted-foreground">A carregar dashboard...</p>
         </div>
       </div>
@@ -132,7 +132,7 @@ export function AdminDashboardPage() {
                   <div className={`bg-gradient-to-br ${card.color} p-3 rounded-lg text-white`}>
                     <Icon className="w-6 h-6" />
                   </div>
-                  <div className="text-2xl">📊</div>
+                  <TrendingUp className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <p className="text-sm text-muted-foreground font-medium mb-1">
                   {card.label}

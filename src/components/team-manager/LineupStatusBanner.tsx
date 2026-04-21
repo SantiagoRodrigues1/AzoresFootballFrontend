@@ -22,8 +22,8 @@ export function LineupStatusBanner({
           title: 'Convocação Aberta em Breve',
           message: `Abre em ${hoursUntilKickoff}h ${minutesUntilKickoff}min (Jogo: ${matchTime})`,
           color: 'from-blue-500 to-blue-600',
-          textColor: 'text-blue-900',
-          bgColor: 'bg-blue-50 border-blue-300',
+          textColor: 'text-blue-900 dark:text-blue-200',
+          bgColor: 'bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-700',
         };
       case 'callup_ready':
         return {
@@ -31,8 +31,8 @@ export function LineupStatusBanner({
           title: 'Convocação Disponível',
           message: `Feche a sua convocação até ${hoursUntilKickoff}h ${minutesUntilKickoff}min do jogo`,
           color: 'from-yellow-500 to-yellow-600',
-          textColor: 'text-yellow-900',
-          bgColor: 'bg-yellow-50 border-yellow-300',
+          textColor: 'text-yellow-900 dark:text-yellow-200',
+          bgColor: 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-300 dark:border-yellow-700',
         };
       case 'lineup_pending':
         return {
@@ -40,8 +40,8 @@ export function LineupStatusBanner({
           title: 'Escalação Disponível',
           message: `Submeta a escalação até ${minutesUntilKickoff}min antes do jogo`,
           color: 'from-orange-500 to-orange-600',
-          textColor: 'text-orange-900',
-          bgColor: 'bg-orange-50 border-orange-300',
+          textColor: 'text-orange-900 dark:text-orange-200',
+          bgColor: 'bg-orange-50 dark:bg-orange-950/30 border-orange-300 dark:border-orange-700',
         };
       case 'lineup_locked':
         return {
@@ -49,8 +49,8 @@ export function LineupStatusBanner({
           title: 'Escalação Bloqueada',
           message: 'A escalação foi enviada para o árbitro',
           color: 'from-green-500 to-green-600',
-          textColor: 'text-green-900',
-          bgColor: 'bg-green-50 border-green-300',
+          textColor: 'text-green-900 dark:text-green-200',
+          bgColor: 'bg-green-50 dark:bg-green-950/30 border-green-300 dark:border-green-700',
         };
       default:
         return {
@@ -58,8 +58,8 @@ export function LineupStatusBanner({
           title: 'Estado Desconhecido',
           message: 'Contacte o administrador',
           color: 'from-gray-500 to-gray-600',
-          textColor: 'text-gray-900',
-          bgColor: 'bg-gray-50 border-gray-300',
+          textColor: 'text-gray-900 dark:text-gray-200',
+          bgColor: 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700',
         };
     }
   };

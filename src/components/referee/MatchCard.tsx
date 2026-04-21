@@ -109,6 +109,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
                     src={match.homeTeam.logo} 
                     alt={match.homeTeam.name}
                     className="team-logo"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 )}
                 <p className="team-name">{match.homeTeam.name}</p>
@@ -134,6 +135,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
                     src={match.awayTeam.logo} 
                     alt={match.awayTeam.name}
                     className="team-logo"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 )}
                 <p className="team-name">{match.awayTeam.name}</p>

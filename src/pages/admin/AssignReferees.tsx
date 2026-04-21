@@ -153,7 +153,6 @@ const AssignReferees: React.FC = () => {
         }
       }
     } catch (err) {
-      console.error('❌ Erro ao carregar dados:', err);
       setError('Erro ao carregar dados. Tente novamente.');
     } finally {
       setLoading(false);
@@ -206,7 +205,7 @@ const AssignReferees: React.FC = () => {
         matchId,
         assignment,
         token || undefined
-      );
+      ) as { success?: boolean; data?: unknown; message?: string };
 
       if (response.success || response.data) {
         setSuccess('✅ Árbitros atribuídos com sucesso!');
@@ -220,7 +219,6 @@ const AssignReferees: React.FC = () => {
         setError(response.message || 'Erro ao atribuir árbitros');
       }
     } catch (err) {
-      console.error('❌ Erro ao guardar atribuição:', err);
       setError('Erro ao guardar. Tente novamente.');
     } finally {
       setSaving(false);

@@ -73,7 +73,6 @@ export function TeamRosterPage() {
       const data = await response.json();
       setPlayers(data.data || []);
     } catch (err) {
-      console.error('❌ Erro:', err);
       setError('Não foi possível carregar o plantel');
     } finally {
       setLoading(false);

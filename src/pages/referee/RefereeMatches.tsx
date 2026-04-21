@@ -69,15 +69,9 @@ const RefereeMatches: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      if (!user?.id) {
-        setError('Utilizador não identificado');
-        return;
-      }
-
-      const matches = await matchService.getRefereeMatches(user.id, token || undefined);
-      setAllMatches(matches);
+      const matches = await refereeService.getMyMatches(token || undefined);
+      setAllMatches(Array.isArray(matches) ? matches : []);
     } catch (err) {
-      console.error('❌ Erro ao carregar jogos:', err);
       setError('Erro ao carregar os seus jogos. Tente novamente.');
     } finally {
       setLoading(false);

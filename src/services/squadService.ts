@@ -60,7 +60,6 @@ class SquadService {
     try {
       const token = localStorage.getItem('azores_score_token');
       if (!token) {
-        console.warn('Token não encontrado ao obter squad');
         return [];
       }
 
@@ -74,8 +73,7 @@ class SquadService {
       });
       
       return response.data.data || [];
-    } catch (error) {
-      console.error('Erro ao obter squad:', error);
+    } catch {
       return [];
     }
   }
@@ -87,7 +85,6 @@ class SquadService {
     try {
       const token = localStorage.getItem('azores_score_token');
       if (!token) {
-        console.warn('Token não encontrado ao obter squad');
         return [];
       }
 
@@ -101,8 +98,7 @@ class SquadService {
       });
       
       return response.data.data || [];
-    } catch (error) {
-      console.error('Erro ao obter squad com stats:', error);
+    } catch {
       return [];
     }
   }
@@ -114,7 +110,6 @@ class SquadService {
     try {
       const token = localStorage.getItem('azores_score_token');
       if (!token) {
-        console.warn('Token não encontrado');
         return null;
       }
 
@@ -128,8 +123,7 @@ class SquadService {
       });
       
       return response.data.data || null;
-    } catch (error) {
-      console.error('Erro ao obter jogador:', error);
+    } catch {
       return null;
     }
   }

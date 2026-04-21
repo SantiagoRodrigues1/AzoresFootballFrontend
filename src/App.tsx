@@ -51,6 +51,7 @@ const AdminReviewPage = lazyNamed(() => import("@/pages/AdminReviewPage"), (modu
 const AdminEditRequestsPage = lazyNamed(() => import("@/pages/AdminEditRequestsPage"), (module) => module.AdminEditRequestsPage);
 const SearchPage = lazyNamed(() => import("@/pages/SearchPage"), (module) => module.SearchPage);
 const PlayerComparisonPage = lazyNamed(() => import("@/pages/PlayerComparisonPage"), (module) => module.PlayerComparisonPage);
+const JournalistRequestPage = lazyNamed(() => import("@/pages/JournalistRequestPage"), (module) => module.JournalistRequestPage);
 const NotFound = lazy(() => import("./pages/NotFound"));
 const RefereeDashboard = lazy(() => import("@/pages/referee/RefereeDashboard"));
 const RefereeMatches = lazy(() => import("@/pages/referee/RefereeMatches"));
@@ -87,8 +88,19 @@ function withLayout(element: ReactNode) {
   );
 }
 
+/**
+ * Home guard: redireciona árbitros para o dashboard de arbitragem
+ */
+function HomeGuard() {
+  const { user } = useAuth();
+  if (user?.role === 'referee') {
+    return <Navigate to="/referee/dashboard" replace />;
+  }
+  return withLayout(<HomePage />);
+}
+
 function AppRoutes() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return <PageLoader />;
@@ -99,11 +111,11 @@ function AppRoutes() {
       {/* Auth Routes */}
       <Route 
         path="/auth" 
-        element={isAuthenticated ? <Navigate to="/" replace /> : <SuspendedRoute><AuthPage /></SuspendedRoute>} 
+        element={isAuthenticated ? <Navigate to={user?.role === 'referee' ? '/referee/dashboard' : '/'} replace /> : <SuspendedRoute><AuthPage /></SuspendedRoute>} 
       />
       
       {/* Protected Routes with TabBar */}
-      <Route path="/" element={withLayout(<HomePage />)} />
+      <Route path="/" element={<HomeGuard />} />
       <Route path="/my-matches" element={withLayout(<TeamManagerRoute><MyMatchesPage /></TeamManagerRoute>)} />
       <Route path="/matches" element={withLayout(<MatchesPage />)} />
       <Route path="/match/:matchId" element={withLayout(<MatchDetailsPage />)} />
@@ -124,6 +136,7 @@ function AppRoutes() {
       <Route path="/contributions" element={withLayout(<ContributionsPage />)} />
       <Route path="/search" element={withLayout(<SearchPage />)} />
       <Route path="/compare-players" element={withLayout(<PremiumRoute><PlayerComparisonPage /></PremiumRoute>)} />
+      <Route path="/journalist/request" element={withLayout(<JournalistRequestPage />)} />
       <Route path="/referees" element={withLayout(<RefereesPage />)} />
       <Route path="/admin-panel" element={withLayout(<AdminRoute><AdminPanelPage /></AdminRoute>)} />
       <Route path="/admin/audit-logs" element={withLayout(<AdminRoute><AdminAuditLogsPage /></AdminRoute>)} />

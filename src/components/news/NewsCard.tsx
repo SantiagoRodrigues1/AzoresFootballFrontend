@@ -16,7 +16,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
       <Link to={`/news/${item._id}`} className="block">
         {item.image ? (
           <div className="aspect-[16/9] overflow-hidden bg-slate-200">
-            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+            <img src={item.image} alt={item.title} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} />
           </div>
         ) : (
           <div className="bg-ocean px-5 py-10 text-white">

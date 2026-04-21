@@ -72,7 +72,7 @@ export function PostCard({ post, onLike, onComment, onReply, onCommentLike, onRe
             </Button>
           </div>
           <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-foreground/90">{post.text}</p>
-          {post.image ? <img src={post.image} alt="post" className="mt-4 aspect-[4/3] w-full rounded-3xl object-cover" /> : null}
+          {post.image ? <img src={post.image} alt="post" className="mt-4 aspect-[4/3] w-full rounded-3xl object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} /> : null}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button variant="secondary" size="sm" className="rounded-full" onClick={() => onLike(post._id)}>
               <Heart className="mr-2 h-4 w-4" /> {post.likesCount}

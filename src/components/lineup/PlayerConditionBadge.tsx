@@ -17,35 +17,35 @@ export const PlayerConditionBadge: React.FC<PlayerConditionBadgeProps> = ({
       case 'available':
         return {
           icon: CheckCircle,
-          color: 'text-green-500 bg-green-50',
+          color: 'text-green-500 bg-green-50 dark:bg-green-950/30',
           label: 'Disponível',
           badge: '🟢',
         };
       case 'doubtful':
         return {
           icon: AlertTriangle,
-          color: 'text-yellow-500 bg-yellow-50',
+          color: 'text-yellow-500 bg-yellow-50 dark:bg-yellow-950/30',
           label: 'Incerto',
           badge: '🟡',
         };
       case 'injured':
         return {
           icon: AlertCircle,
-          color: 'text-red-500 bg-red-50',
+          color: 'text-red-500 bg-red-50 dark:bg-red-950/30',
           label: 'Lesionado',
           badge: '🔴',
         };
       case 'suspended':
         return {
           icon: AlertCircle,
-          color: 'text-purple-500 bg-purple-50',
+          color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/30',
           label: 'Suspenso',
           badge: '⛔',
         };
       default:
         return {
           icon: CheckCircle,
-          color: 'text-gray-500 bg-gray-50',
+          color: 'text-gray-500 bg-gray-50 dark:bg-gray-800',
           label: 'Desconhecido',
           badge: '⚪',
         };

@@ -85,26 +85,17 @@ export function MyMatchCard({ match, teamName }: MyMatchCardProps) {
   };
 
   const handleViewLineup = () => {
-    if (!matchId) {
-      console.error('❌ Match ID is missing');
-      return;
-    }
+    if (!matchId) return;
     navigate(`/match-lineup/${matchId}`);
   };
 
   const handleManageLiveMatch = () => {
-    if (!matchId) {
-      console.error('❌ Match ID is missing');
-      return;
-    }
+    if (!matchId) return;
     navigate(`/live-match/${matchId}`);
   };
 
   const handleViewMatchDetails = () => {
-    if (!matchId) {
-      console.error('❌ Match ID is missing');
-      return;
-    }
+    if (!matchId) return;
     navigate(`/match/${matchId}`);
   };
 
@@ -236,15 +227,26 @@ export function MyMatchCard({ match, teamName }: MyMatchCardProps) {
         )}
 
         {isScheduled && (
-          <motion.button
-            whileHover={{ x: 2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleViewLineup}
-            className="w-full bg-gradient-to-r from-primary to-primary/90 text-white py-3 font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-shadow"
-          >
-            Gerir Escalação
-            <ArrowRight className="w-4 h-4" />
-          </motion.button>
+          <div className="space-y-2 p-2">
+            <motion.button
+              whileHover={{ x: 2 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleManageLiveMatch}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-shadow rounded-lg"
+            >
+              🎮 Gerir Jogo ao Vivo
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+            <motion.button
+              whileHover={{ x: 2 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleViewLineup}
+              className="w-full bg-gradient-to-r from-primary to-primary/90 text-white py-2 text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-shadow rounded-lg"
+            >
+              📋 Gerir Escalação
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </div>
         )}
 
         {isCompleted && (

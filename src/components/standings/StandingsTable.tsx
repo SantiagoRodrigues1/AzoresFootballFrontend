@@ -144,8 +144,8 @@ export default function StandingsTable({ standings, titulo = "Classificação" }
 
                     <TableCell className="pl-6 font-medium text-base">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-2xl shadow-sm">
-                          🏆
+                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shadow-sm">
+                          <Trophy className="h-5 w-5 text-primary" />
                         </div>
                         <span className="truncate max-w-[220px]">{team.team}</span>
                       </div>

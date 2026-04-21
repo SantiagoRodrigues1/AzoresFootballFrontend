@@ -168,7 +168,7 @@ const AdminRefereeApprovalPanel: React.FC = () => {
         <IonCard>
           <IonCardHeader>
             <IonCardTitle>
-              📋 Árbitros Pendentes
+              Árbitros Pendentes
               <IonBadge color="danger">{referees.length}</IonBadge>
             </IonCardTitle>
           </IonCardHeader>
@@ -248,7 +248,7 @@ const AdminRefereeApprovalPanel: React.FC = () => {
                 {selectedReferee.documentoURL && (
                   <IonCard>
                     <IonCardHeader>
-                      <IonCardTitle>📄 Documento</IonCardTitle>
+                      <IonCardTitle>Documento</IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent>
                       <IonButton
@@ -267,7 +267,7 @@ const AdminRefereeApprovalPanel: React.FC = () => {
                 {/* AÇÕES */}
                 <IonCard>
                   <IonCardHeader>
-                    <IonCardTitle>✅ Ação</IonCardTitle>
+                    <IonCardTitle>Ação</IonCardTitle>
                   </IonCardHeader>
                   <IonCardContent>
                     <div className="rejection-section">

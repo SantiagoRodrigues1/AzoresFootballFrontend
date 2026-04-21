@@ -10,11 +10,22 @@ import {
 import type { NewsItem } from '@/types/features';
 
 export interface HomeMatch {
+  /** MongoDB ObjectId of the match – required for lineup checks and navigation */
+  _id?: string;
+  id?: string;
   casa: string;
   fora: string;
+  /** Populated team objects when available from the matches-by-competition route */
+  homeTeam?: { id: string; name: string; logo?: string | null };
+  awayTeam?: { id: string; name: string; logo?: string | null };
   data_hora: string;
-  status: 'scheduled' | 'live' | 'finished';
-  resultado?: string;
+  status: 'scheduled' | 'live' | 'finished' | 'halftime' | 'postponed';
+  /** Scoreline string (e.g. "2-1"). Only present for in-progress or finished matches. */
+  resultado?: string | null;
+  /** Competition/championship display name */
+  competicao?: string;
+  /** Stadium name */
+  estadio?: string | null;
 }
 
 export interface HomeScorer {
@@ -57,15 +68,35 @@ function toSafeInteger(value: unknown, fallback = 0) {
   return fallback;
 }
 
+const VALID_STATUSES = new Set(['scheduled', 'live', 'finished', 'halftime', 'postponed']);
+
 function toHomeMatch(match: Record<string, unknown>): HomeMatch {
-  const status = typeof match.status === 'string' ? match.status : 'scheduled';
+  const rawStatus = typeof match.status === 'string' ? match.status : 'scheduled';
+  const status = VALID_STATUSES.has(rawStatus)
+    ? (rawStatus as HomeMatch['status'])
+    : 'scheduled';
+
+  // Resolve home/away team objects when provided by the enriched backend route
+  const homeTeamRaw = match.homeTeam as Record<string, unknown> | null | undefined;
+  const awayTeamRaw = match.awayTeam as Record<string, unknown> | null | undefined;
 
   return {
-    casa: String(match.casa || match.house || 'Equipa Casa'),
-    fora: String(match.fora || match.away || 'Equipa Fora'),
+    _id: typeof match._id === 'string' ? match._id : undefined,
+    id: typeof match.id === 'string' ? match.id : undefined,
+    casa: String(match.casa || (homeTeamRaw?.name) || 'Equipa Casa'),
+    fora: String(match.fora || (awayTeamRaw?.name) || 'Equipa Fora'),
+    homeTeam: homeTeamRaw
+      ? { id: String(homeTeamRaw.id || ''), name: String(homeTeamRaw.name || ''), logo: homeTeamRaw.logo as string | null }
+      : undefined,
+    awayTeam: awayTeamRaw
+      ? { id: String(awayTeamRaw.id || ''), name: String(awayTeamRaw.name || ''), logo: awayTeamRaw.logo as string | null }
+      : undefined,
     data_hora: String(match.data_hora || ''),
-    status: ['live', 'finished'].includes(status) ? (status as HomeMatch['status']) : 'scheduled',
-    resultado: typeof match.resultado === 'string' ? match.resultado : undefined
+    status,
+    // Preserve scoreline only when the backend sends it (i.e. match has started)
+    resultado: typeof match.resultado === 'string' ? match.resultado : null,
+    competicao: typeof match.competicao === 'string' ? match.competicao : undefined,
+    estadio: typeof match.estadio === 'string' ? match.estadio : null
   };
 }
 

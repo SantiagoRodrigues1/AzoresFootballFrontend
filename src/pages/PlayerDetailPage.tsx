@@ -111,7 +111,7 @@ export function PlayerDetailPage() {
         <motion.section initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-[32px] border border-border/70 bg-card/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.35)] backdrop-blur-xl">
           <div className="grid gap-6 px-6 py-6 sm:grid-cols-[auto,1fr] sm:items-center">
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-[28px] bg-[linear-gradient(135deg,rgba(14,116,144,0.18),rgba(59,130,246,0.18))] text-primary shadow-inner">
-              {player.photo ? <img src={player.photo} alt={player.name} className="h-full w-full object-cover" /> : <UserRound className="h-10 w-10" />}
+              {player.photo ? <img src={player.photo} alt={player.name} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <UserRound className="h-10 w-10" />}
             </div>
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3">

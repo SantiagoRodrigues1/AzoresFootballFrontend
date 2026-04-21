@@ -29,7 +29,6 @@ export function FavoriteTeamButton({
     e.stopPropagation();
     
     if (!token) {
-      console.warn('Sem token para mudar favorito');
       return;
     }
 
@@ -51,8 +50,7 @@ export function FavoriteTeamButton({
         setIsFav(newFavoriteStatus);
         onToggle?.(newFavoriteStatus);
       }
-    } catch (error) {
-      console.error('Erro ao toggle favorito:', error);
+    } catch {
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +99,7 @@ export function FavoriteTeamButton({
       className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
         isFav
           ? 'bg-yellow-100 text-yellow-900 hover:bg-yellow-200'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          : 'bg-muted text-muted-foreground hover:bg-muted/80'
       }`}
     >
       <Star

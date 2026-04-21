@@ -75,8 +75,7 @@ export function TeamMatchesSection({
       await onDeleteMatch(matchToDelete);
       setShowDeleteAlert(false);
       setMatchToDelete(null);
-    } catch (error) {
-      console.error('Erro ao apagar jogo:', error);
+    } catch {
     } finally {
       setIsDeleting(false);
     }

@@ -8,14 +8,14 @@ import path from "path";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8000,
+    port: 8001,
     strictPort: true,
     watch: {
       ignored: ['**/.env*'],
     },
     hmr: {
       host: 'localhost',
-      port: 8000,
+      port: 8001,
     },
   },
 

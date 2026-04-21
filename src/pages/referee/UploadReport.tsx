@@ -77,7 +77,6 @@ const UploadReport: React.FC = () => {
       const matchData = await matchService.getMatchById(matchId, token || undefined);
       setMatch(matchData);
     } catch (err) {
-      console.error('❌ Erro ao carregar jogo:', err);
       setError('Erro ao carregar detalhes do jogo. Tente novamente.');
     } finally {
       setLoading(false);
@@ -148,7 +147,6 @@ const UploadReport: React.FC = () => {
         setError(response.message || 'Erro ao enviar relatório');
       }
     } catch (err) {
-      console.error('❌ Erro ao fazer upload:', err);
       setError('Erro ao fazer upload do relatório. Tente novamente.');
     } finally {
       setUploading(false);

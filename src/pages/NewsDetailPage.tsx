@@ -53,7 +53,7 @@ export function NewsDetailPage() {
     <MobilePage title={item?.title || 'Notícia'} subtitle={item?.category} backTo="/news">
       {item ? (
         <div className="space-y-6">
-          {item.image ? <img src={item.image} alt={item.title} className="aspect-[16/10] w-full rounded-[32px] object-cover" /> : null}
+          {item.image ? <img src={item.image} alt={item.title} className="aspect-[16/10] w-full rounded-[32px] object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} /> : null}
           <div className="rounded-[32px] border border-border/70 bg-card p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
               <span>{item.author?.name || 'Redação'}</span>

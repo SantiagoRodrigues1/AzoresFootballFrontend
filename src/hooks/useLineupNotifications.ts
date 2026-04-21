@@ -89,8 +89,7 @@ export function useFavoriteTeams(token?: string) {
         const data = await response.json();
         setFavorites(data.data.map((team: any) => team._id));
       }
-    } catch (error) {
-      console.error('Erro ao carregar favoritos:', error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -110,8 +109,7 @@ export function useFavoriteTeams(token?: string) {
         const data = await response.json();
         return data.data.isFavorite;
       }
-    } catch (error) {
-      console.error('Erro ao verificar favorito:', error);
+    } catch {
     }
 
     return false;
@@ -134,8 +132,7 @@ export function useFavoriteTeams(token?: string) {
         setFavorites(newFavorites);
         return data.data.isFavorite;
       }
-    } catch (error) {
-      console.error('Erro ao toggle favorito:', error);
+    } catch {
     }
 
     return false;

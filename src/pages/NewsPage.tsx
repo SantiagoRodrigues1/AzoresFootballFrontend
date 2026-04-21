@@ -47,7 +47,7 @@ export function NewsPage() {
       actions={<Button variant="outline" size="icon" className="rounded-full" onClick={() => query.refetch()}><RefreshCcw className="h-4 w-4" /></Button>}
     >
       <div className="space-y-4">
-        {user?.role === 'admin' ? (
+        {(user?.role === 'admin' || user?.role === 'journalist') ? (
           <section className="rounded-[28px] border border-border/70 bg-card p-5 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
             <h2 className="text-lg font-bold text-foreground">Publicar notícia</h2>
             <div className="mt-4 space-y-3">

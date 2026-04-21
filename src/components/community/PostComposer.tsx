@@ -100,7 +100,7 @@ export function PostComposer({ onSubmit }: PostComposerProps) {
       {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
       {previewImage ? (
         <div className="mt-4 overflow-hidden rounded-[24px] border border-border/70 bg-muted/20">
-          <img src={previewImage} alt="Pré-visualização da publicação" className="max-h-72 w-full object-cover" />
+          <img src={previewImage} alt="Pré-visualização da publicação" className="max-h-72 w-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} />
         </div>
       ) : null}
     </section>

@@ -145,7 +145,7 @@ const RefereeSignupForm: React.FC = () => {
               <hr />
 
               <IonItem>
-                <IonLabel position="floating">Nome de Utilizador</IonLabel>
+                <IonLabel position="floating">Nome de Utilizador *</IonLabel>
                 <IonInput
                   value={formData.name}
                   onIonChange={(e) => handleInputChange('name', e.detail.value)}
@@ -154,7 +154,7 @@ const RefereeSignupForm: React.FC = () => {
               </IonItem>
 
               <IonItem>
-                <IonLabel position="floating">Email</IonLabel>
+                <IonLabel position="floating">Email *</IonLabel>
                 <IonInput
                   type="email"
                   value={formData.email}
@@ -164,7 +164,7 @@ const RefereeSignupForm: React.FC = () => {
               </IonItem>
 
               <IonItem>
-                <IonLabel position="floating">Password</IonLabel>
+                <IonLabel position="floating">Password *</IonLabel>
                 <IonInput
                   type="password"
                   value={formData.password}
@@ -174,7 +174,7 @@ const RefereeSignupForm: React.FC = () => {
               </IonItem>
 
               <IonItem>
-                <IonLabel position="floating">Confirmar Password</IonLabel>
+                <IonLabel position="floating">Confirmar Password *</IonLabel>
                 <IonInput
                   type="password"
                   value={formData.confirmPassword}
@@ -191,10 +191,10 @@ const RefereeSignupForm: React.FC = () => {
               <h2>Dados Pessoais e de Arbitragem</h2>
               <hr />
 
-              <h3>📋 Dados Pessoais</h3>
+              <h3>Dados Pessoais</h3>
 
               <IonItem>
-                <IonLabel position="floating">Nome Completo</IonLabel>
+                <IonLabel position="floating">Nome Completo *</IonLabel>
                 <IonInput
                   value={formData.nomeCompleto}
                   onIonChange={(e) => handleInputChange('nomeCompleto', e.detail.value)}
@@ -202,7 +202,7 @@ const RefereeSignupForm: React.FC = () => {
               </IonItem>
 
               <IonItem>
-                <IonLabel position="floating">Data de Nascimento</IonLabel>
+                <IonLabel position="floating">Data de Nascimento *</IonLabel>
                 <IonInput
                   type="date"
                   value={formData.dataNascimento}
@@ -211,7 +211,7 @@ const RefereeSignupForm: React.FC = () => {
               </IonItem>
 
               <IonItem>
-                <IonLabel position="floating">Telefone</IonLabel>
+                <IonLabel position="floating">Telefone *</IonLabel>
                 <IonInput
                   value={formData.telefone}
                   onIonChange={(e) => handleInputChange('telefone', e.detail.value)}
@@ -219,10 +219,10 @@ const RefereeSignupForm: React.FC = () => {
                 />
               </IonItem>
 
-              <h3>🏆 Dados de Arbitragem</h3>
+              <h3>Dados de Arbitragem</h3>
 
               <IonItem>
-                <IonLabel position="floating">Número do Cartão</IonLabel>
+                <IonLabel position="floating">Número do Cartão *</IonLabel>
                 <IonInput
                   value={formData.numeroCartaoArbitro}
                   onIonChange={(e) => handleInputChange('numeroCartaoArbitro', e.detail.value)}
@@ -259,7 +259,7 @@ const RefereeSignupForm: React.FC = () => {
               </IonItem>
 
               <IonItem>
-                <IonLabel>Categoria</IonLabel>
+                <IonLabel>Categoria *</IonLabel>
                 <IonSelect
                   value={formData.categoria}
                   onIonChange={(e) => handleInputChange('categoria', e.detail.value)}

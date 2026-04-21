@@ -284,7 +284,7 @@ export function LineupViewerModal({
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.85, y: 30, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-gradient-to-b from-slate-50 to-slate-100 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-y-auto"
+            className="bg-card rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-y-auto"
           >
             {/* Header Profissional */}
             <div className="sticky top-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-8 relative overflow-hidden z-10">
@@ -323,7 +323,7 @@ export function LineupViewerModal({
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-3 mb-8 pb-6 border-b-2 border-slate-200 overflow-x-auto"
+                  className="flex gap-3 mb-8 pb-6 border-b-2 border-border overflow-x-auto"
                 >
                   {allLineups.map((l, idx) => (
                     <motion.button
@@ -332,7 +332,7 @@ export function LineupViewerModal({
                       className={`px-6 py-3 rounded-lg font-bold whitespace-nowrap transition-all ${
                         selectedTeamLineup === idx
                           ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg'
-                          : 'bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-200'
+                          : 'bg-muted text-foreground hover:bg-muted/80 border-2 border-border'
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -392,7 +392,7 @@ export function LineupViewerModal({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="mt-10 pt-10 border-t-4 border-slate-200"
+                  className="mt-10 pt-10 border-t-4 border-border"
                 >
                   <motion.button
                     onClick={() => setShowSubstitutes(!showSubstitutes)}
@@ -401,7 +401,7 @@ export function LineupViewerModal({
                     className={`w-full flex items-center justify-between px-6 py-4 rounded-xl font-bold transition-all mb-6 ${
                       showSubstitutes
                         ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg'
-                        : 'bg-white text-slate-800 border-2 border-slate-300 hover:border-amber-500 hover:bg-amber-50'
+                        : 'bg-card text-foreground border-2 border-border hover:border-amber-500 hover:bg-amber-50'
                     }`}
                   >
                     <div className="flex items-center gap-3">

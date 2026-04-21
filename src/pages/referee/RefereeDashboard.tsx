@@ -2,10 +2,10 @@
  * RefereeDashboard.tsx
  * Dashboard principal para árbitros aprovados
  * 
- * Mostra:
- * - Estatísticas (total jogos, este mês, relatórios)
- * - Próximos jogos atribuídos
- * - Notificações
+ * Mostra APENAS os jogos atribuídos ao árbitro:
+ * - Equipas, data/hora, estádio
+ * - Equipa de arbitragem completa (4 árbitros com tipos)
+ * - A função deste árbitro em cada jogo
  */
 
 import React, { useEffect, useState } from 'react';
@@ -18,106 +18,127 @@ import {
   IonButton,
   IonIcon,
   IonLoading,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonRefresher,
   IonRefresherContent,
-  IonToast
+  IonToast,
+  IonBadge,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
 } from '@ionic/react';
 import {
-  calendar,
-  documentText,
   settings,
   logOut,
-  refresh
+  refresh,
+  footballOutline,
+  calendarOutline,
+  locationOutline,
+  peopleOutline,
 } from 'ionicons/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import refereeService from '@/services/refereeService';
-import matchService from '@/services/matchService';
-import StatsCard from '@/components/referee/StatsCard';
-import MatchCard from '@/components/referee/MatchCard';
 import './RefereeDashboard.css';
 
-interface DashboardStats {
-  totalMatches: number;
-  matchesThisMonth: number;
-  reportsSubmitted: number;
+interface RefereeTeamEntry {
+  referee: {
+    _id: string;
+    name: string;
+    tipo?: string;
+    photo?: string;
+  };
+  tipo: string;
 }
 
-/**
- * RefereeDashboard Component
- * Página inicial para árbitros com resumo de atividade
- */
+interface MatchData {
+  _id: string;
+  homeTeam: { _id: string; name?: string; equipa?: string; logo?: string };
+  awayTeam: { _id: string; name?: string; equipa?: string; logo?: string };
+  date: string;
+  time?: string;
+  stadium?: string;
+  status: string;
+  competition?: { _id: string; name: string };
+  refereeTeam?: RefereeTeamEntry[];
+  myRole?: string;
+  homeScore?: number;
+  awayScore?: number;
+}
+
 const RefereeDashboard: React.FC = () => {
   const { user, logout, token } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<DashboardStats>({
-    totalMatches: 0,
-    matchesThisMonth: 0,
-    reportsSubmitted: 0
-  });
-  const [upcomingMatches, setUpcomingMatches] = useState<any[]>([]);
+  const [matches, setMatches] = useState<MatchData[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Carregar dados do dashboard
-  const loadDashboard = async () => {
+  const loadMatches = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      // Buscar dados do dashboard
-      const dashboardData = await refereeService.getRefereeDashboard(token || undefined);
-      
-      if (dashboardData) {
-        setStats({
-          totalMatches: dashboardData.totalMatches || 0,
-          matchesThisMonth: dashboardData.matchesThisMonth || 0,
-          reportsSubmitted: dashboardData.reportsSubmitted || 0
-        });
-        setUpcomingMatches(dashboardData.upcomingMatches || []);
-      }
+      const data = await refereeService.getMyMatches(token || undefined);
+      setMatches(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('❌ Erro ao carregar dashboard:', err);
-      setError('Erro ao carregar dados do dashboard. Tente novamente.');
+      setError('Erro ao carregar jogos. Tente novamente.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Recarregar dados ao puxar
   const handleRefresh = async (event: CustomEvent<any>) => {
     try {
-      await loadDashboard();
+      await loadMatches();
     } finally {
       event.detail.complete();
     }
   };
 
-  // Carregar dados ao montar o componente
   useEffect(() => {
-    loadDashboard();
+    loadMatches();
   }, [token]);
 
-  // Handle logout
   const handleLogout = () => {
     logout();
     navigate('/auth', { replace: true });
   };
 
-  if (loading && upcomingMatches.length === 0) {
+  const formatDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('pt-PT', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    } catch { return dateStr; }
+  };
+
+  const formatTime = (dateStr: string, time?: string) => {
+    if (time) return time;
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+    } catch { return ''; }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const map: Record<string, { label: string; color: string }> = {
+      scheduled: { label: 'Agendado', color: 'primary' },
+      live: { label: 'Ao Vivo', color: 'danger' },
+      finished: { label: 'Terminado', color: 'medium' },
+      cancelled: { label: 'Cancelado', color: 'dark' },
+    };
+    const s = map[status] || { label: status, color: 'medium' };
+    return <IonBadge color={s.color}>{s.label}</IonBadge>;
+  };
+
+  if (loading && matches.length === 0) {
     return (
       <IonPage>
         <IonHeader>
           <IonToolbar color="primary">
-            <IonTitle>Dashboard do Árbitro</IonTitle>
+            <IonTitle>Meus Jogos</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>
-          <IonLoading isOpen={true} message="Carregando dashboard..." />
+          <IonLoading isOpen={true} message="Carregando jogos..." />
         </IonContent>
       </IonPage>
     );
@@ -125,20 +146,18 @@ const RefereeDashboard: React.FC = () => {
 
   return (
     <IonPage>
-      {/* HEADER */}
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>Dashboard</IonTitle>
-          <IonButton slot="end" fill="clear" onClick={() => navigate('/profile')}>
+          <IonTitle>Meus Jogos</IonTitle>
+          <IonButton slot="end" fill="clear" color="light" onClick={() => navigate('/profile')}>
             <IonIcon icon={settings} />
           </IonButton>
-          <IonButton slot="end" fill="clear" onClick={handleLogout}>
+          <IonButton slot="end" fill="clear" color="light" onClick={handleLogout}>
             <IonIcon icon={logOut} />
           </IonButton>
         </IonToolbar>
       </IonHeader>
 
-      {/* CONTENT */}
       <IonContent>
         <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
           <IonRefresherContent
@@ -149,126 +168,98 @@ const RefereeDashboard: React.FC = () => {
           />
         </IonRefresher>
 
-        {/* Mensagem de Boas-vindas e Perfil */}
+        {/* Welcome */}
         <div className="referee-dashboard-header ion-margin">
           <div className="profile-section">
-            {user?.avatar && (
-              <img src={user.avatar} alt={user.name} className="profile-avatar" />
-            )}
             <div className="profile-info">
-              <h1 className="greeting">👋 Bem-vindo, {user?.name?.split(' ')[0]}!</h1>
+              <h1 className="greeting">Bem-vindo, {user?.name?.split(' ')[0]}!</h1>
               <p className="status">
-                ✅ Status: Aprovado
+                {matches.length} jogo{matches.length !== 1 ? 's' : ''} atribuído{matches.length !== 1 ? 's' : ''}
               </p>
             </div>
           </div>
         </div>
 
-        {/* ESTATÍSTICAS */}
+        {/* Match list */}
         <div className="ion-margin">
-          <h2 className="section-title">📊 Estatísticas</h2>
-          <IonGrid className="stats-grid">
-            <IonRow>
-              <IonCol size="12" sizeMd="6" sizeLg="4">
-                <StatsCard
-                  title="Total de Jogos"
-                  value={stats.totalMatches}
-                  icon={calendar}
-                  color="primary"
-                  onClick={() => navigate('/referee/matches')}
-                />
-              </IonCol>
-              <IonCol size="12" sizeMd="6" sizeLg="4">
-                <StatsCard
-                  title="Este Mês"
-                  value={stats.matchesThisMonth}
-                  icon={calendar}
-                  color="success"
-                />
-              </IonCol>
-              <IonCol size="12" sizeMd="6" sizeLg="4">
-                <StatsCard
-                  title="Relatórios"
-                  value={stats.reportsSubmitted}
-                  icon={documentText}
-                  color="warning"
-                />
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </div>
+          {matches.length > 0 ? (
+            matches.map((match) => (
+              <IonCard key={match._id} className="mb-3">
+                <IonCardHeader className="pb-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <IonIcon icon={footballOutline} color="primary" />
+                      <span className="font-bold text-base">
+                        {match.homeTeam?.equipa || match.homeTeam?.name} vs {match.awayTeam?.equipa || match.awayTeam?.name}
+                      </span>
+                    </div>
+                    {getStatusBadge(match.status)}
+                  </div>
+                  {match.status === 'finished' && (
+                    <p className="text-lg font-bold mt-1">{match.homeScore ?? 0} - {match.awayScore ?? 0}</p>
+                  )}
+                </IonCardHeader>
+                <IonCardContent>
+                  {/* My role */}
+                  {match.myRole && (
+                    <div className="mb-2">
+                      <IonBadge color="tertiary">{match.myRole}</IonBadge>
+                    </div>
+                  )}
 
-        {/* PRÓXIMOS JOGOS */}
-        <div className="ion-margin">
-          <div className="section-header">
-            <h2 className="section-title">🎯 Próximos Jogos</h2>
-            <IonButton fill="clear" size="small" onClick={() => navigate('/referee/matches')}>
-              Ver Todos
-            </IonButton>
-          </div>
+                  {/* Date/time/stadium */}
+                  <div className="flex flex-col gap-1 text-sm mb-3">
+                    <div className="flex items-center gap-2">
+                      <IonIcon icon={calendarOutline} />
+                      <span>{formatDate(match.date)} {formatTime(match.date, match.time)}</span>
+                    </div>
+                    {match.stadium && (
+                      <div className="flex items-center gap-2">
+                        <IonIcon icon={locationOutline} />
+                        <span>{match.stadium}</span>
+                      </div>
+                    )}
+                    {match.competition && (
+                      <div className="flex items-center gap-2">
+                        <IonIcon icon={footballOutline} />
+                        <span>{match.competition.name}</span>
+                      </div>
+                    )}
+                  </div>
 
-          {upcomingMatches && upcomingMatches.length > 0 ? (
-            <div className="matches-list">
-              {upcomingMatches.slice(0, 3).map((match) => (
-                <MatchCard
-                  key={match.id}
-                  match={match}
-                  onDetailsClick={() => navigate(`/referee/matches/${match.id}`)}
-                  showScore={false}
-                />
-              ))}
-              {upcomingMatches.length > 3 && (
-                <IonButton 
-                  expand="block" 
-                  fill="outline"
-                  onClick={() => navigate('/referee/matches')}
-                  className="ion-margin-top"
-                >
-                  Ver {upcomingMatches.length - 3} jogos a mais
-                </IonButton>
-              )}
-            </div>
+                  {/* Referee team */}
+                  {match.refereeTeam && match.refereeTeam.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <IonIcon icon={peopleOutline} />
+                        <span className="font-semibold text-sm">Equipa de Arbitragem</span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-1">
+                        {match.refereeTeam.map((entry, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm pl-2">
+                            <span className="text-muted-foreground min-w-[140px]">{entry.tipo}:</span>
+                            <span className="font-medium">{entry.referee?.name || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </IonCardContent>
+              </IonCard>
+            ))
           ) : (
-            <div className="empty-state">
-              <p className="empty-icon">📭</p>
-              <p className="empty-message">Sem jogos atribuídos no momento</p>
+            <div className="empty-state text-center py-8">
+              <p className="text-4xl mb-2">📭</p>
+              <p className="text-muted-foreground">Sem jogos atribuídos no momento</p>
             </div>
           )}
         </div>
-
-        {/* AÇÕES RÁPIDAS */}
-        <div className="ion-margin ion-margin-bottom">
-          <h2 className="section-title">⚡ Ações Rápidas</h2>
-          <IonGrid>
-            <IonRow>
-              <IonCol size="12" sizeMd="6">
-                <IonButton 
-                  expand="block" 
-                  color="primary"
-                  onClick={() => navigate('/referee/matches')}
-                >
-                  Meus Jogos
-                </IonButton>
-              </IonCol>
-              <IonCol size="12" sizeMd="6">
-                <IonButton 
-                  expand="block" 
-                  color="secondary"
-                  onClick={() => navigate('/profile')}
-                >
-                  Definições
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </div>
       </IonContent>
 
-      {/* Toast para erros */}
       <IonToast
         isOpen={!!error}
         onDidDismiss={() => setError(null)}
-        message={error}
+        message={error || ''}
         duration={3000}
         color="danger"
       />

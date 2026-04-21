@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { API_URL } from '@/services/api';
 import { 
   IonModal, 
@@ -40,8 +40,28 @@ interface Team {
 
 interface Referee {
   id: string;
+  _id?: string;
   nome: string;
+  name?: string;
 }
+
+interface RefereeEntry {
+  referee: string;
+  tipo: string;
+}
+
+const REFEREE_TYPES = [
+  'Ãrbitro Principal',
+  'Assistente 1',
+  'Assistente 2',
+  '4Âº Ãrbitro',
+  'VAR',
+  'AVAR',
+  'Delegado',
+  'Observador',
+  'Cronometrista',
+  'Outro',
+];
 
 interface EditMatchModalProps {
   open: boolean;
@@ -65,6 +85,12 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
   });
   const [teams, setTeams] = useState<Team[]>([]);
   const [referees, setReferees] = useState<Referee[]>([]);
+  const [refereeTeam, setRefereeTeam] = useState<RefereeEntry[]>([
+    { referee: '', tipo: 'Ãrbitro Principal' },
+    { referee: '', tipo: 'Assistente 1' },
+    { referee: '', tipo: 'Assistente 2' },
+    { referee: '', tipo: '4Âº Ãrbitro' },
+  ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [teamsLoading, setTeamsLoading] = useState(true);
@@ -79,6 +105,13 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
           date: dateStr,
           time: timeStr?.substring(0, 5) || '15:00',
         });
+        // Pre-popular refereeTeam se existir no match
+        if ((match as any).refereeTeam && Array.isArray((match as any).refereeTeam) && (match as any).refereeTeam.length === 4) {
+          setRefereeTeam((match as any).refereeTeam.map((r: any) => ({
+            referee: r.referee?._id || r.referee || '',
+            tipo: r.tipo || '',
+          })));
+        }
       }
     }
   }, [open, match]);
@@ -101,10 +134,9 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
 
       if (refereesRes.ok) {
         const data = await refereesRes.json();
-        setReferees(data);
+        setReferees(Array.isArray(data) ? data : data.data || []);
       }
-    } catch (err) {
-      console.error('Erro ao carregar dados:', err);
+    } catch {
     } finally {
       setTeamsLoading(false);
     }
@@ -112,7 +144,7 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
 
   const handleSave = async () => {
     if (!formData.homeTeamId || !formData.awayTeamId) {
-      setError('Ambas as equipas são obrigatórias');
+      setError('Ambas as equipas sÃ£o obrigatÃ³rias');
       return;
     }
 
@@ -138,7 +170,7 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
           homeTeamId: formData.homeTeamId,
           awayTeamId: formData.awayTeamId,
           date: `${formData.date}T${formData.time}:00`,
-          refereeId: formData.refereeId,
+          refereeTeam: refereeTeam.every(r => r.referee && r.tipo) ? refereeTeam : undefined,
           stadium: formData.stadium,
           homeScore: formData.homeScore,
           awayScore: formData.awayScore,
@@ -174,15 +206,15 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
       </IonHeader>
       <IonContent className="ion-padding" fullscreen>
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-red-700 text-sm font-medium">{error}</p>
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl flex gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <p className="text-red-700 dark:text-red-300 text-sm font-medium">{error}</p>
           </div>
         )}
 
         <IonList inset>
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Equipa da Casa</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Equipa da Casa <span className="text-red-500">*</span></IonLabel>
             <IonSelect
               value={formData.homeTeamId}
               onIonChange={(e) => setFormData({ ...formData, homeTeamId: e.detail.value })}
@@ -199,7 +231,7 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Equipa Visitante</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Equipa Visitante <span className="text-red-500">*</span></IonLabel>
             <IonSelect
               value={formData.awayTeamId}
               onIonChange={(e) => setFormData({ ...formData, awayTeamId: e.detail.value })}
@@ -216,7 +248,7 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Data</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Data <span className="text-red-500">*</span></IonLabel>
             <IonInput
               type="date"
               value={formData.date}
@@ -227,7 +259,7 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Hora</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">Hora <span className="text-red-500">*</span></IonLabel>
             <IonInput
               type="time"
               value={formData.time}
@@ -238,33 +270,67 @@ export function EditMatchModal({ open, onOpenChange, match, token, onSave }: Edi
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Estádio</IonLabel>
+            <IonLabel position="stacked" className="font-semibold">EstÃ¡dio</IonLabel>
             <IonInput
               value={formData.stadium}
               onIonChange={(e) => setFormData({ ...formData, stadium: e.detail.value || '' })}
-              placeholder="Ex: Estádio Municipal"
+              placeholder="Ex: EstÃ¡dio Municipal"
               disabled={loading}
               className="font-medium"
             />
           </IonItem>
+        </IonList>
 
-          <IonItem>
-            <IonLabel position="stacked" className="font-semibold">Árbitro</IonLabel>
-            <IonSelect
-              value={formData.refereeId}
-              onIonChange={(e) => setFormData({ ...formData, refereeId: e.detail.value })}
-              disabled={loading}
-              placeholder="Opcional"
-              className="font-medium"
-            >
-              {referees.map((ref) => (
-                <IonSelectOption key={ref.id} value={ref.id}>
-                  {ref.nome}
-                </IonSelectOption>
-              ))}
-            </IonSelect>
-          </IonItem>
+        {/* Equipa de Arbitragem */}
+        <div className="mt-4 mb-2 px-1">
+          <h3 className="font-bold text-base">Equipa de Arbitragem</h3>
+          <p className="text-xs text-gray-500 mt-1">Selecione 4 Ã¡rbitros diferentes com as respetivas funÃ§Ãµes</p>
+        </div>
+        <IonList inset>
+          {refereeTeam.map((entry, idx) => (
+            <div key={idx}>
+              <IonItem>
+                <IonLabel position="stacked" className="font-semibold">FunÃ§Ã£o {idx + 1}</IonLabel>
+                <IonSelect
+                  value={entry.tipo}
+                  onIonChange={(e) => {
+                    const updated = [...refereeTeam];
+                    updated[idx] = { ...updated[idx], tipo: e.detail.value };
+                    setRefereeTeam(updated);
+                  }}
+                  disabled={loading}
+                  className="font-medium"
+                >
+                  {REFEREE_TYPES.map((t) => (
+                    <IonSelectOption key={t} value={t}>{t}</IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked" className="font-semibold">Ãrbitro {idx + 1}</IonLabel>
+                <IonSelect
+                  value={entry.referee}
+                  onIonChange={(e) => {
+                    const updated = [...refereeTeam];
+                    updated[idx] = { ...updated[idx], referee: e.detail.value };
+                    setRefereeTeam(updated);
+                  }}
+                  disabled={loading}
+                  placeholder="Selecionar Ã¡rbitro"
+                  className="font-medium"
+                >
+                  {referees.map((ref) => (
+                    <IonSelectOption key={ref._id || ref.id} value={ref._id || ref.id}>
+                      {ref.nome || ref.name}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+            </div>
+          ))}
+        </IonList>
 
+        <IonList inset>
           <IonItem>
             <IonLabel position="stacked" className="font-semibold">Status</IonLabel>
             <IonSelect

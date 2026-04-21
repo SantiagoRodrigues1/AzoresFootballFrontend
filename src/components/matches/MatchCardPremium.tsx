@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { API_URL } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, MapPin, Eye, Users, Zap, Trophy } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Calendar, MapPin, Users, ChevronRight, BarChart2 } from 'lucide-react';
 import { LineupViewerFlashscore } from '../lineup/LineupViewerFlashscore';
 
 interface Match {
@@ -26,324 +26,198 @@ interface MatchCardPremiumProps {
   token?: string;
 }
 
-const TEAM_COLORS: Record<string, { primary: string; secondary: string; emoji: string }> = {
-  'santa cruz': { primary: 'from-red-600 to-red-700', secondary: 'bg-red-100 text-red-700', emoji: '🔴' },
-  'vitória': { primary: 'from-blue-600 to-blue-700', secondary: 'bg-blue-100 text-blue-700', emoji: '💙' },
-  'madalena': { primary: 'from-slate-800 to-slate-900', secondary: 'bg-slate-100 text-slate-800', emoji: '⚫' },
-  'praia': { primary: 'from-yellow-500 to-yellow-600', secondary: 'bg-yellow-100 text-yellow-700', emoji: '🟡' },
-  'graciosa': { primary: 'from-purple-600 to-purple-700', secondary: 'bg-purple-100 text-purple-700', emoji: '💜' },
-  'pico': { primary: 'from-gray-300 to-gray-400', secondary: 'bg-gray-100 text-gray-700', emoji: '⚪' },
-  'faial': { primary: 'from-green-600 to-green-700', secondary: 'bg-green-100 text-green-700', emoji: '🟢' },
-  'terceira': { primary: 'from-orange-600 to-orange-700', secondary: 'bg-orange-100 text-orange-700', emoji: '🟠' },
-  'são jorge': { primary: 'from-cyan-600 to-cyan-700', secondary: 'bg-cyan-100 text-cyan-700', emoji: '🔵' },
-};
+const PALETTE = [
+  'bg-sky-600','bg-emerald-600','bg-violet-600','bg-rose-600','bg-amber-500',
+  'bg-cyan-600','bg-indigo-600','bg-teal-600','bg-orange-500','bg-pink-600',
+];
 
-const getTeamStyle = (teamName: string) => {
-  for (const [key, style] of Object.entries(TEAM_COLORS)) {
-    if (teamName.toLowerCase().includes(key)) return style;
-  }
-  return { primary: 'from-indigo-600 to-indigo-700', secondary: 'bg-indigo-100 text-indigo-700', emoji: '⚽' };
-};
+function teamColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) & 0xffff;
+  return PALETTE[hash % PALETTE.length];
+}
 
-const formatDate = (dateStr: string | Date | undefined) => {
-  if (!dateStr) return { date: 'Data inválida', time: '--:--' };
+function initials(name: string): string {
+  const words = name.replace(/[^a-zA-ZÀ-ÿ\s]/g, '').split(/\s+/).filter(Boolean);
+  if (words.length === 1) return words[0].slice(0, 3).toUpperCase();
+  if (words.length === 2) return (words[0][0] + words[1].slice(0, 2)).toUpperCase();
+  return (words[0][0] + words[1][0] + words[2][0]).toUpperCase();
+}
 
+const STATUS_CONFIG = {
+  live:      { label: 'Ao Vivo',   dot: 'bg-green-500',  badge: 'bg-green-50 text-green-700 border-green-200' },
+  halftime:  { label: 'Intervalo', dot: 'bg-amber-500',  badge: 'bg-amber-50 text-amber-700 border-amber-200' },
+  finished:  { label: 'Terminado', dot: 'bg-slate-400',  badge: 'bg-slate-50 text-slate-600 border-slate-200' },
+  postponed: { label: 'Adiado',    dot: 'bg-orange-500', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
+  scheduled: { label: 'Agendado',  dot: 'bg-sky-400',    badge: 'bg-sky-50 text-sky-700 border-sky-200' },
+} as const;
+
+function formatMatchDate(dateStr: string | Date | undefined) {
+  if (!dateStr) return { date: '', time: '' };
   try {
-    const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
-
-    if (isNaN(date.getTime())) {
-      return { date: 'Data inválida', time: '--:--' };
-    }
-
+    const d = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
+    if (isNaN(d.getTime())) return { date: '', time: '' };
     return {
-      date: date.toLocaleDateString('pt-PT', {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short',
-      }),
-      time: date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),
+      date: d.toLocaleDateString('pt-PT', { weekday: 'short', day: 'numeric', month: 'short' }),
+      time: d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),
     };
   } catch {
-    return { date: 'Data inválida', time: '--:--' };
+    return { date: '', time: '' };
   }
-};
+}
 
-export function MatchCardPremium({ match, token }: MatchCardPremiumProps) {
+export function MatchCardPremium({ match, token: _token }: MatchCardPremiumProps) {
   const navigate = useNavigate();
   const [hasLineup, setHasLineup] = useState(false);
   const [loadingLineup, setLoadingLineup] = useState(false);
-  const [lineupData, setLineupData] = useState<any>(null);
+  const [lineupData, setLineupData] = useState<Record<string, unknown> | null>(null);
   const [showLineupModal, setShowLineupModal] = useState(false);
   const [lineupCount, setLineupCount] = useState(0);
 
   const matchId = match._id || match.id || '';
-  
-  // Extract team names from multiple sources - in priority order:
-  // 1. homeTeam/awayTeam objects (modern populated structure)
-  // 2. house/away fields (new backend fields)
-  // 3. casa/fora fields (legacy string fields)
-  // 4. Falls back to generic names
-  
-  let homeTeamName = 'Equipa Casa';
-  let awayTeamName = 'Equipa Fora';
-  
-  // Priority 1: homeTeam/awayTeam objects
-  if (match.homeTeam?.name) {
-    homeTeamName = String(match.homeTeam.name).trim();
-  }
-  
-  if (match.awayTeam?.name) {
-    awayTeamName = String(match.awayTeam.name).trim();
-  }
-  
-  // Priority 2: house/away fields (new from improved backend)
-  if (homeTeamName === 'Equipa Casa' && (match as any).house) {
-    const houseName = String((match as any).house).trim();
-    if (houseName && houseName !== 'Equipa Casa') {
-      homeTeamName = houseName;
-    }
-  }
-  
-  if (awayTeamName === 'Equipa Fora' && (match as any).away) {
-    const awayNameValue = String((match as any).away).trim();
-    if (awayNameValue && awayNameValue !== 'Equipa Fora') {
-      awayTeamName = awayNameValue;
-    }
-  }
-  
-  // Priority 3: casa/fora fields (legacy)
-  if (homeTeamName === 'Equipa Casa' && match.casa) {
-    const casaStr = String(match.casa).trim();
-    if (casaStr && casaStr !== '' && casaStr !== 'null' && casaStr !== 'undefined') {
-      homeTeamName = casaStr;
-    }
-  }
-  
-  if (awayTeamName === 'Equipa Fora' && match.fora) {
-    const foraStr = String(match.fora).trim();
-    if (foraStr && foraStr !== '' && foraStr !== 'null' && foraStr !== 'undefined') {
-      awayTeamName = foraStr;
-    }
-  }
 
-  const homeStyle = useMemo(() => getTeamStyle(homeTeamName), [homeTeamName]);
-  const awayStyle = useMemo(() => getTeamStyle(awayTeamName), [awayTeamName]);
+  let homeTeamName = match.homeTeam?.name?.trim() || '';
+  let awayTeamName = match.awayTeam?.name?.trim() || '';
+  if (!homeTeamName && match.casa) homeTeamName = String(match.casa).trim();
+  if (!awayTeamName && match.fora) awayTeamName = String(match.fora).trim();
+  if (!homeTeamName) homeTeamName = 'Equipa Casa';
+  if (!awayTeamName) awayTeamName = 'Equipa Fora';
 
-  const matchDate = useMemo(() => {
-    const formattedDate = formatDate(match.date || match.data_hora);
-    return formattedDate;
-  }, [match]);
+  const matchDate = useMemo(() => formatMatchDate(match.date || match.data_hora), [match.date, match.data_hora]);
 
   const isCompleted = match.status === 'finished';
-  const isLive = match.status === 'live';
-  const isHalftime = match.status === 'halftime';
+  const isLive      = match.status === 'live';
+  const isHalftime  = match.status === 'halftime';
   const isPostponed = match.status === 'postponed';
+  const showScore   = isCompleted || isLive || isHalftime;
 
-  // Parse score
-  const scores = useMemo(() => {
-    if (isCompleted && match.resultado) {
-      const parts = match.resultado.split('-').map(s => s.trim());
-      return { home: parts[0] || '0', away: parts[1] || '0' };
-    }
-    return { home: '-', away: '-' };
-  }, [isCompleted, match.resultado]);
+  const scoreDisplay = useMemo(() => {
+    if (showScore && match.resultado) return match.resultado.replace('-', '  ');
+    return null;
+  }, [showScore, match.resultado]);
 
-  // Check lineups
+  const statusCfg = STATUS_CONFIG[match.status ?? 'scheduled'] ?? STATUS_CONFIG.scheduled;
+
   useEffect(() => {
-    const checkLineupAvailability = async () => {
-      if (!matchId) return;
-
+    if (!matchId) return;
+    let cancelled = false;
+    (async () => {
       try {
         setLoadingLineup(true);
         const response = await fetch(`${API_URL}/lineups/match/${matchId}/all`);
-
-        if (response.ok) {
+        if (response.ok && !cancelled) {
           const data = await response.json();
           const lineups = data.data?.lineups || data.lineups || [];
           setLineupCount(lineups.length);
           setHasLineup(lineups.length > 0);
           setLineupData(data.data || data);
         }
-      } catch (err) {
-        setHasLineup(false);
+      } catch {
+        if (!cancelled) setHasLineup(false);
       } finally {
-        setLoadingLineup(false);
+        if (!cancelled) setLoadingLineup(false);
       }
-    };
-
-    checkLineupAvailability();
+    })();
+    return () => { cancelled = true; };
   }, [matchId]);
 
   return (
     <>
       <motion.div
-        whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.15)' }}
-        className="relative overflow-hidden rounded-xl shadow-lg bg-white border border-gray-100 transition-all"
+        whileHover={{ y: -2 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        className={[
+          'relative overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md',
+          (isLive || isHalftime) ? 'border-green-500/40' : 'border-border',
+        ].join(' ')}
       >
-        {/* Status Bar - Top */}
-        <AnimatePresence>
-          {(isLive || isHalftime) && (
-            <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: 'auto' }}
-              exit={{ height: 0 }}
-              className="bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-2 text-xs font-bold overflow-hidden"
-            >
-              <motion.span animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                🔴 {isHalftime ? 'INTERVALO' : 'AO VIVO'} - {match.status}
-              </motion.span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {(isLive || isHalftime) && (
+          <div className="h-[3px] w-full bg-green-500 animate-pulse" />
+        )}
 
-        {/* Header with Competition */}
-        <div className="px-4 pt-3 pb-2 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {match.competicao && (
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Calendar size={12} />
+              <span className="text-xs">{matchDate.date}</span>
+            </div>
+            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[11px] font-semibold ${statusCfg.badge}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} ${isLive ? 'animate-pulse' : ''}`} />
+              {statusCfg.label}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex flex-1 items-center gap-2.5 min-w-0">
+              <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-white text-[11px] font-black tracking-tight ${teamColor(homeTeamName)}`}>
+                {initials(homeTeamName)}
+              </div>
+              <span className="text-sm font-semibold text-foreground leading-tight truncate">{homeTeamName}</span>
+            </div>
+
+            <div className="flex-shrink-0 flex flex-col items-center gap-0.5 px-1 min-w-[68px]">
+              {scoreDisplay ? (
+                <span className="text-xl font-black text-foreground tabular-nums tracking-tight">{scoreDisplay}</span>
+              ) : (
                 <>
-                  <Trophy size={14} className="text-amber-600" />
-                  <span className="text-xs font-bold text-gray-700">{match.competicao}</span>
+                  <span className="text-base font-bold text-foreground tabular-nums">{matchDate.time}</span>
+                  <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-widest">vs</span>
                 </>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-600 font-semibold">
-              <Calendar size={14} />
-              <span>{matchDate.date}</span>
+
+            <div className="flex flex-1 items-center justify-end gap-2.5 min-w-0">
+              <span className="text-sm font-semibold text-foreground leading-tight truncate text-right">{awayTeamName}</span>
+              <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-white text-[11px] font-black tracking-tight ${teamColor(awayTeamName)}`}>
+                {initials(awayTeamName)}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Main Match Content */}
-        <div className="px-4 py-5">
-          {/* Teams and Score */}
-          <div className="mb-5">
-            {/* Home Team */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-3 mb-4"
-            >
-              <span className="text-4xl">{homeStyle.emoji}</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 font-medium uppercase">Casa</p>
-                <p className="text-base font-bold text-gray-900 break-words whitespace-normal">{homeTeamName || 'Equipa Casa'}</p>
-              </div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring' }}
-                className={`bg-gradient-to-br ${homeStyle.primary} text-white w-14 h-14 rounded-lg flex items-center justify-center shadow-lg`}
-              >
-                <span className="text-2xl font-black">{scores.home}</span>
-              </motion.div>
-            </motion.div>
-
-            {/* Center Divider with Time */}
-            <div className="flex items-center justify-center gap-3 my-3">
-              <div className="flex-1 h-0.5 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-              <div className="text-center px-3">
-                <p className="text-xs text-gray-500 font-semibold">vs</p>
-                <p className="text-sm font-bold text-gray-700">{matchDate.time}</p>
-              </div>
-              <div className="flex-1 h-0.5 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-            </div>
-
-            {/* Away Team */}
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="flex items-center gap-3"
-            >
-              <span className="text-4xl">{awayStyle.emoji}</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 font-medium uppercase">Fora</p>
-                <p className="text-base font-bold text-gray-900 break-words whitespace-normal">{awayTeamName || 'Equipa Fora'}</p>
-              </div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', delay: 0.1 }}
-                className={`bg-gradient-to-br ${awayStyle.primary} text-white w-14 h-14 rounded-lg flex items-center justify-center shadow-lg`}
-              >
-                <span className="text-2xl font-black">{scores.away}</span>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Stadium Info */}
           {match.estadio && (
-            <div className="mb-4 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200 flex items-center gap-2">
-              <MapPin size={14} className="text-blue-600" />
-              <span className="text-xs text-blue-700 font-medium">{match.estadio}</span>
+            <div className="mt-3 flex items-center gap-1.5 text-muted-foreground">
+              <MapPin size={11} />
+              <span className="text-[11px] truncate">{match.estadio}</span>
             </div>
           )}
+        </div>
 
-          {/* Lineup Section */}
-          <div className="space-y-2">
-            {loadingLineup ? (
-              <motion.div
-                animate={{ opacity: [0.5, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="px-3 py-2.5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 flex items-center justify-center gap-2"
-              >
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
-                  <Users className="w-4 h-4 text-green-600" />
+        {(hasLineup || isCompleted || isPostponed) && (
+          <div className="border-t border-border px-4 py-2.5 flex items-center gap-2">
+            {isPostponed && (
+              <span className="text-xs text-orange-600 font-medium">Jogo adiado</span>
+            )}
+            {!isPostponed && loadingLineup && (
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
+                  <Users size={13} />
                 </motion.div>
-                <span className="text-xs font-bold text-green-700">Carregando escalação...</span>
-              </motion.div>
-            ) : hasLineup ? (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setShowLineupModal(true)}
-                className="w-full px-3 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-bold text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-              >
-                <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                  <Eye size={16} />
-                </motion.div>
-                <span>👥 Ver Escalação ({lineupCount})</span>
-                <motion.span animate={{ x: [0, 3, 0] }} transition={{ duration: 1, repeat: Infinity }}>
-                  →
-                </motion.span>
-              </motion.button>
-            ) : (
-              <div className="px-3 py-2.5 bg-gray-100 rounded-lg border border-gray-300 flex items-center justify-center gap-2">
-                <Users size={16} className="text-gray-500" />
-                <span className="text-xs font-semibold text-gray-600">Escalação em breve</span>
+                <span className="text-xs">A verificar escalação</span>
               </div>
             )}
+            {!isPostponed && !loadingLineup && hasLineup && (
+              <button
+                onClick={() => setShowLineupModal(true)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:text-emerald-600 transition-colors"
+              >
+                <Users size={13} />
+                Escalação ({lineupCount})
+              </button>
+            )}
+            {isCompleted && (
+              <button
+                onClick={(e) => { e.stopPropagation(); navigate(`/match/${matchId}`); }}
+                className="ml-auto flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                <BarChart2 size={13} />
+                Detalhes
+                <ChevronRight size={12} />
+              </button>
+            )}
           </div>
-        </div>
-
-        {/* Footer - Status */}
-        <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-          {isCompleted ? (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/match/${matchId}`);
-              }}
-              className="w-full px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-bold text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-            >
-              <Eye size={14} />
-              <span>📊 Ver Detalhes do Jogo</span>
-              <motion.span animate={{ x: [0, 3, 0] }} transition={{ duration: 1, repeat: Infinity }}>
-                →
-              </motion.span>
-            </motion.button>
-          ) : isPostponed ? (
-            <p className="text-xs font-bold text-yellow-700 text-center">⏸ Jogo Adiado</p>
-          ) : (
-            <p className="text-xs font-bold text-blue-700 text-center">📅 Agendado para {matchDate.time}</p>
-          )}
-        </div>
+        )}
       </motion.div>
 
-      {/* Lineup Modal */}
       {showLineupModal && lineupData && (
         <LineupViewerFlashscore
           isOpen={showLineupModal}

@@ -270,12 +270,12 @@ export function ContributionsPage() {
             {type === 'player' ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Nome do jogador</Label>
+                  <Label>Nome do jogador <span className="text-destructive">*</span></Label>
                   <Input value={playerName} onChange={(event) => setPlayerName(event.target.value)} className="rounded-full" placeholder="Ex: João Silva" />
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>Equipa</Label>
+                    <Label>Equipa <span className="text-destructive">*</span></Label>
                     <SearchSelect
                       value={playerTeam}
                       onChange={setPlayerTeam}
@@ -287,7 +287,7 @@ export function ContributionsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Número</Label>
+                    <Label>Número <span className="text-destructive">*</span></Label>
                     <Input value={playerNumber} onChange={(event) => setPlayerNumber(event.target.value)} className="rounded-full" inputMode="numeric" placeholder="Ex: 10" />
                   </div>
                 </div>
@@ -325,7 +325,7 @@ export function ContributionsPage() {
             {type === 'team' ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Nome da equipa</Label>
+                  <Label>Nome da equipa <span className="text-destructive">*</span></Label>
                   <Input value={teamName} onChange={(event) => setTeamName(event.target.value)} className="rounded-full" placeholder="Ex: União Micaelense" />
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
@@ -348,7 +348,7 @@ export function ContributionsPage() {
                   <Input value={teamStadium} onChange={(event) => setTeamStadium(event.target.value)} className="rounded-full" placeholder="Opcional" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Descrição</Label>
+                  <Label>Descrição <span className="text-destructive">*</span></Label>
                   <Textarea value={teamDescription} onChange={(event) => setTeamDescription(event.target.value)} className="min-h-28 rounded-3xl" placeholder="História, contexto competitivo e o que deve ser validado." />
                 </div>
               </div>
@@ -357,7 +357,7 @@ export function ContributionsPage() {
             {type === 'match' ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Equipa da casa</Label>
+                  <Label>Equipa da casa <span className="text-destructive">*</span></Label>
                   <SearchSelect
                     value={homeTeam}
                     onChange={setHomeTeam}
@@ -369,7 +369,7 @@ export function ContributionsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Equipa visitante</Label>
+                  <Label>Equipa visitante <span className="text-destructive">*</span></Label>
                   <SearchSelect
                     value={awayTeam}
                     onChange={setAwayTeam}
@@ -382,11 +382,11 @@ export function ContributionsPage() {
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>Data</Label>
+                    <Label>Data <span className="text-destructive">*</span></Label>
                     <Input value={matchDate} onChange={(event) => setMatchDate(event.target.value)} type="date" className="rounded-full" />
                   </div>
                   <div className="space-y-2">
-                    <Label>Hora</Label>
+                    <Label>Hora <span className="text-destructive">*</span></Label>
                     <Input value={matchTime} onChange={(event) => setMatchTime(event.target.value)} type="time" className="rounded-full" />
                   </div>
                 </div>
@@ -431,7 +431,7 @@ export function ContributionsPage() {
             <Input type="file" accept="image/png,image/jpeg,image/webp" className="rounded-full" onChange={handleImageChange} />
             {imageError ? <p className="text-sm text-destructive">{imageError}</p> : null}
             <p className="text-xs text-muted-foreground">Se o Cloudinary não estiver configurado, o backend faz fallback local sem quebrar o envio.</p>
-            {imagePreview ? <img src={imagePreview} alt="preview" className="aspect-video w-full rounded-3xl object-cover" /> : null}
+            {imagePreview ? <img src={imagePreview} alt="preview" className="aspect-video w-full rounded-3xl object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} /> : null}
             <Button
               className="w-full rounded-full"
               variant="secondary"
@@ -470,7 +470,7 @@ export function ContributionsPage() {
             (uploadsQuery.data || []).map((item) => (
               <article key={item._id} className="rounded-[28px] border border-border/70 bg-card p-5 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
                 <div className="flex gap-4">
-                  {item.url ? <img src={item.url} alt={item.playerId?.name || 'Imagem de jogador'} className="h-20 w-20 rounded-3xl object-cover" /> : null}
+                  {item.url ? <img src={item.url} alt={item.playerId?.name || 'Imagem de jogador'} className="h-20 w-20 rounded-3xl object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} /> : null}
                   <div className="min-w-0 flex-1 space-y-1">
                     <p className="text-sm font-semibold text-foreground">{item.playerId?.name || 'Jogador sem nome'}</p>
                     <p className="text-xs uppercase tracking-[0.18em] text-primary/70">{item.status}</p>

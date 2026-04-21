@@ -117,8 +117,8 @@ export function NotificationCenter({
                   animate={{ opacity: 1, y: 0 }}
                   className={`p-4 rounded-lg border-l-4 ${
                     notification.read
-                      ? 'bg-gray-50 border-gray-300'
-                      : 'bg-blue-50 border-blue-500'
+                      ? 'bg-muted border-border'
+                      : 'bg-blue-50 dark:bg-blue-950/30 border-blue-500'
                   } hover:shadow-md transition-shadow cursor-pointer`}
                 >
                   <div className="flex items-start gap-3">

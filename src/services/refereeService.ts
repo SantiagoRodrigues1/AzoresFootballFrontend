@@ -26,7 +26,6 @@ export const getApprovedReferees = async (token?: string): Promise<RefereeUser[]
     });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error('❌ Erro ao obter árbitros aprovados:', error);
     throw error;
   }
 };
@@ -42,7 +41,6 @@ export const getAllReferees = async (token?: string): Promise<RefereeUser[]> => 
     });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error('❌ Erro ao obter árbitros:', error);
     throw error;
   }
 };
@@ -58,7 +56,6 @@ export const getRefereeById = async (refereeId: string, token?: string): Promise
     });
     return response.data.data || response.data;
   } catch (error) {
-    console.error(`❌ Erro ao obter árbitro ${refereeId}:`, error);
     throw error;
   }
 };
@@ -74,7 +71,6 @@ export const getRefereeDashboard = async (token?: string) => {
     });
     return response.data.data || response.data;
   } catch (error) {
-    console.error('❌ Erro ao obter dashboard do árbitro:', error);
     throw error;
   }
 };
@@ -101,7 +97,6 @@ export const uploadMatchReport = async (
     );
     return response.data;
   } catch (error) {
-    console.error(`❌ Erro ao fazer upload do relatório:`, error);
     throw error;
   }
 };
@@ -116,13 +111,12 @@ export const confirmRefereeAttendance = async (
   try {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await axios.post(
-      `${API_URL}/matches/${matchId}/confirm-attendance`,
-      {},
+      `${API_URL}/referee/matches/${matchId}/confirm`,
+      { status: 'confirmed' },
       { headers }
     );
     return response.data;
   } catch (error) {
-    console.error(`❌ Erro ao confirmar presença:`, error);
     throw error;
   }
 };
@@ -137,13 +131,27 @@ export const markRefereeUnavailable = async (
   try {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await axios.post(
-      `${API_URL}/matches/${matchId}/unavailable`,
-      {},
+      `${API_URL}/referee/matches/${matchId}/confirm`,
+      { status: 'unavailable' },
       { headers }
     );
     return response.data;
   } catch (error) {
-    console.error(`❌ Erro ao marcar como indisponível:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Obter os jogos atribuídos ao árbitro autenticado
+ */
+export const getMyMatches = async (token?: string) => {
+  try {
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await axios.get(`${API_URL}/referee/my-matches`, {
+      headers
+    });
+    return response.data.data || response.data || [];
+  } catch (error) {
     throw error;
   }
 };
@@ -153,6 +161,7 @@ export default {
   getAllReferees,
   getRefereeById,
   getRefereeDashboard,
+  getMyMatches,
   uploadMatchReport,
   confirmRefereeAttendance,
   markRefereeUnavailable

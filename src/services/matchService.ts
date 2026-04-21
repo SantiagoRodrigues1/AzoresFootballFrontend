@@ -49,7 +49,6 @@ export const getAllMatches = async (token?: string): Promise<Match[]> => {
     const response = await api.get(`/matches`, { headers });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error('❌ Erro ao obter jogos:', error);
     throw error;
   }
 };
@@ -63,7 +62,6 @@ export const getRefereeMatches = async (refereeId: string, token?: string): Prom
     const response = await api.get(`/referee/${refereeId}/matches`, { headers });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error(`❌ Erro ao obter jogos do árbitro:`, error);
     throw error;
   }
 };
@@ -77,7 +75,6 @@ export const getMatchById = async (matchId: string, token?: string): Promise<Mat
     const response = await api.get(`/matches/${matchId}`, { headers });
     return response.data.data || response.data;
   } catch (error) {
-    console.error(`❌ Erro ao obter jogo ${matchId}:`, error);
     throw error;
   }
 };
@@ -93,13 +90,12 @@ export const assignRefereesToMatch = async (
   matchId: string,
   assignment: RefereeAssignment,
   token?: string
-): Promise<any> => {
+): Promise<unknown> => {
   try {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await api.put(`/admin/matches/${matchId}/referees`, assignment, { headers });
     return response.data;
   } catch (error) {
-    console.error(`❌ Erro ao atribuir árbitros:`, error);
     throw error;
   }
 };
@@ -113,7 +109,6 @@ export const getMatchesWithoutReferees = async (token?: string): Promise<Match[]
     const response = await api.get(`/matches?referees=missing`, { headers });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error('❌ Erro ao obter jogos sem árbitros:', error);
     throw error;
   }
 };
@@ -130,7 +125,6 @@ export const getMatchesByStatus = async (
     const response = await api.get(`/matches?status=${status}`, { headers });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error(`❌ Erro ao obter jogos com status ${status}:`, error);
     throw error;
   }
 };
@@ -145,7 +139,6 @@ export const getAllAdminMatches = async (token?: string): Promise<Match[]> => {
     const response = await api.get(`/admin/matches`, { headers });
     return response.data.data || response.data || [];
   } catch (error) {
-    console.error('❌ Erro ao obter jogos (admin):', error);
     throw error;
   }
 };
@@ -156,6 +149,6 @@ export default {
   getMatchById,
   assignRefereesToMatch,
   getMatchesWithoutReferees,
-  getMatchesByStatus
-  ,getAllAdminMatches
+  getMatchesByStatus,
+  getAllAdminMatches
 };

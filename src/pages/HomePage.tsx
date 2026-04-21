@@ -22,7 +22,10 @@ import {
   Filter,
   Clock,
   Flame,
-  Newspaper
+  Newspaper,
+  Settings,
+  Shield,
+  Building2
 } from 'lucide-react';
 import { isClubManagerRole } from '@/utils/access';
 
@@ -92,11 +95,11 @@ export function HomePage() {
 
   const getRoleConfig = () => {
     const roles = {
-      admin: { icon: '⚙️', label: 'Admin', color: 'bg-purple-500/20 text-purple-600' },
-      referee: { icon: '🟨', label: 'Árbitro', color: 'bg-yellow-500/20 text-yellow-600' },
-      club_manager: { icon: '🏟️', label: 'Clube', color: 'bg-blue-500/20 text-blue-600' },
-      team_manager: { icon: '🏟️', label: 'Clube', color: 'bg-blue-500/20 text-blue-600' },
-      default: { icon: '⚽', label: 'Adepto', color: 'bg-green-500/20 text-green-600' }
+      admin: { label: 'Admin', color: 'bg-purple-500/20 text-purple-600' },
+      referee: { label: 'Árbitro', color: 'bg-yellow-500/20 text-yellow-600' },
+      club_manager: { label: 'Clube', color: 'bg-blue-500/20 text-blue-600' },
+      team_manager: { label: 'Clube', color: 'bg-blue-500/20 text-blue-600' },
+      default: { label: 'Adepto', color: 'bg-green-500/20 text-green-600' }
     };
     return roles[user?.role as keyof typeof roles] || roles.default;
   };
@@ -162,7 +165,7 @@ export function HomePage() {
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-orange-500 flex items-center justify-center border-2 border-background">
-                  <span className="text-[10px] font-bold">⚽</span>
+                  <span className="text-[8px] font-bold text-white">A</span>
                 </div>
               </div>
               <div>
@@ -484,11 +487,11 @@ export function HomePage() {
                           className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-muted/40"
                         >
                           <div className="flex-shrink-0">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-                              idx === 0 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                              idx === 1 ? 'bg-gradient-to-r from-slate-400 to-slate-500' :
-                              idx === 2 ? 'bg-gradient-to-r from-orange-700 to-orange-800' :
-                              'bg-slate-300'
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                              idx === 0 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white' :
+                              idx === 1 ? 'bg-gradient-to-r from-slate-500 to-slate-600 text-white' :
+                              idx === 2 ? 'bg-gradient-to-r from-orange-700 to-orange-800 text-white' :
+                              'bg-muted text-muted-foreground'
                             }`}>
                               {idx + 1}
                             </div>
@@ -508,7 +511,7 @@ export function HomePage() {
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-100">
+                      <div className="flex flex-wrap gap-2 pb-4 border-b border-border">
                         {Object.keys(scorersByChampionship).map((champ) => (
                           <motion.button
                             key={champ}

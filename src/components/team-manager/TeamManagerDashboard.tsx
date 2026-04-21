@@ -4,18 +4,17 @@
  * Mobile-first responsive design with desportivo/dinâmico theme
  */
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { API_URL } from '@/services/api';
 import {
   Clock,
   Zap,
   Users,
   Trophy,
   Target,
-  Settings,
-  Plus,
   ArrowRight,
   Flame,
   BarChart3,
@@ -78,6 +77,85 @@ export const TeamManagerDashboard: React.FC = () => {
     starters: 0,
     subs: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Fetch match data and lineup status on mount
+  useEffect(() => {
+    if (!matchId) {
+      navigate('/my-matches');
+      return;
+    }
+
+    const token = localStorage.getItem('azores_score_token');
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const matchRes = await fetch(`${API_URL}/team-manager/matches/${matchId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (cancelled) return;
+
+        if (!matchRes.ok) {
+          setFetchError('Jogo não encontrado');
+          return;
+        }
+
+        const matchJson = await matchRes.json();
+        const md = matchJson.data || matchJson;
+
+        if (!cancelled) {
+          setMatch({
+            id: md.id || String(md._id),
+            homeTeam: { id: md.homeTeam?.id || '', name: md.homeTeam?.name || '' },
+            awayTeam: { id: md.awayTeam?.id || '', name: md.awayTeam?.name || '' },
+            date: md.date,
+            status: md.status,
+          });
+        }
+
+        // Fetch lineup status for the team manager's assigned team
+        const assignedTeam = user?.assignedTeam;
+        if (assignedTeam && !cancelled) {
+          try {
+            const lineupRes = await fetch(
+              `${API_URL}/lineups/${matchId}/${assignedTeam}`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            if (!cancelled && lineupRes.ok) {
+              const lineupJson = await lineupRes.json();
+              const lineup = lineupJson.data || lineupJson;
+              setLineupStatus({
+                hasLineup: true,
+                formation: lineup.formation || '4-3-3',
+                starters: (lineup.starters || []).length,
+                subs: (lineup.substitutes || []).length,
+              });
+            }
+          } catch {
+            // No lineup saved yet – keep defaults
+          }
+        }
+      } catch {
+        if (!cancelled) setFetchError('Erro ao carregar informações do jogo');
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    fetchData();
+    return () => {
+      cancelled = true;
+    };
+  }, [matchId, user?.assignedTeam, navigate]);
 
   // Calculate time to match
   const timeToMatch = useMemo(() => {
@@ -91,9 +169,9 @@ export const TeamManagerDashboard: React.FC = () => {
   }, [match]);
 
   // Navigation handlers
-  const handleEditLineup = () => navigate(`/match/${matchId}/lineup`);
-  const handleLiveMatch = () => navigate(`/match/${matchId}/live`);
-  const handleViewStats = () => navigate(`/match/${matchId}/stats`);
+  const handleEditLineup = () => navigate(`/match-lineup/${matchId}`);
+  const handleLiveMatch = () => navigate(`/live-match/${matchId}`);
+  const handleViewStats = () => navigate('/my-matches');
 
   // Quick action items
   const quickActions = [
@@ -154,6 +232,32 @@ export const TeamManagerDashboard: React.FC = () => {
       color: 'text-purple-400',
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="tm-dashboard">
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+          <span>A carregar...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="tm-dashboard">
+        <div style={{ padding: '2rem', color: '#ef4444', textAlign: 'center' }}>
+          <p>{fetchError}</p>
+          <button
+            onClick={() => navigate('/my-matches')}
+            style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer' }}
+          >
+            Voltar aos Jogos
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="tm-dashboard">
@@ -382,39 +486,36 @@ export const TeamManagerDashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* ===== PERFORMANCE ANALYTICS ===== */}
-      <motion.div
-        className="tm-analytics-section"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-      >
-        <h2 className="tm-section-title">Últimas Ações</h2>
+      {/* ===== LINEUP STATUS ===== */}
+      {lineupStatus.hasLineup && (
+        <motion.div
+          className="tm-analytics-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <h2 className="tm-section-title">Estado da Escalação</h2>
 
-        <div className="tm-timeline">
-          {[
-            { action: 'Plantel definido', time: 'Hoje 14:30', icon: CheckCircle2 },
-            { action: 'Capitão confirmado', time: 'Hoje 14:15', icon: Trophy },
-            { action: 'Formação selecionada', time: 'Hoje 14:00', icon: Target },
-          ].map((item, idx) => (
+          <div className="tm-timeline">
             <motion.div
-              key={idx}
               className="tm-timeline-item"
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.7 + idx * 0.1 }}
+              transition={{ delay: 0.7 }}
             >
               <div className="tm-timeline-dot">
-                <item.icon size={14} />
+                <CheckCircle2 size={14} />
               </div>
               <div className="tm-timeline-content">
-                <p className="tm-timeline-action">{item.action}</p>
-                <span className="tm-timeline-time">{item.time}</span>
+                <p className="tm-timeline-action">Escalação guardada</p>
+                <span className="tm-timeline-time">
+                  {lineupStatus.starters} titular(es) · {lineupStatus.subs} suplente(s) · {lineupStatus.formation}
+                </span>
               </div>
             </motion.div>
-          ))}
-        </div>
-      </motion.div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

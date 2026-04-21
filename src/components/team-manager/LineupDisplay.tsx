@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Shield } from 'lucide-react';
 import { LineupPlayer, CallUpPlayer } from '@/types';
 import { POSITION_DISPLAY_NAMES } from '@/utils/formations';
 
@@ -106,7 +107,9 @@ export function LineupDisplay({
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-4xl">⚽</span>
+              <span className="text-4xl">
+                <Shield className="w-10 h-10 text-white" />
+              </span>
               <h2 className="text-4xl font-black">Onze Inicial</h2>
             </div>
             <p className="text-slate-300 text-sm font-semibold">Formação: <span className="text-white font-black text-lg">{formation}</span></p>

@@ -1,5 +1,5 @@
 // User Types
-export type UserRole = 'fan' | 'referee' | 'club_manager' | 'team_manager' | 'team_president' | 'admin';
+export type UserRole = 'fan' | 'referee' | 'club_manager' | 'team_manager' | 'team_president' | 'journalist' | 'admin';
 
 export interface User {
   id: string;

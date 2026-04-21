@@ -241,7 +241,7 @@ export function TeamsPage() {
                       }}
                     >
                       {hasRenderableLogo(team.logo) ? (
-                        <img src={team.logo} alt={teamName} className="w-12 h-12 object-contain" />
+                        <img src={team.logo} alt={teamName} className="w-12 h-12 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                       ) : (
                         <span className="text-primary">{initials}</span>
                       )}

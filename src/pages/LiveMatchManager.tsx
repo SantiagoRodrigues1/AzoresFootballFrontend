@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { liveMatchService, Match } from '@/services/liveMatchService';
 import { squadService, Player } from '@/services/squadService';
-import { EventModal, EventType } from '../components/live/EventModal';
-import { CardTypeModal } from '../components/live/CardTypeModal';
+import { EventModal, EventType } from '@/components/live/EventModal';
+import { CardTypeModal } from '@/components/live/CardTypeModal';
 import './LiveMatchManager.css';
 
 type TimerHandle = ReturnType<typeof setInterval>;
@@ -34,6 +34,7 @@ export const LiveMatchManager: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEventType, setModalEventType] = useState<ModalEventType | null>(null);
   const [cardTypeModal, setCardTypeModal] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
 
   // === FETCH MATCH ===
   const fetchMatch = useCallback(async () => {
@@ -41,7 +42,7 @@ export const LiveMatchManager: React.FC = () => {
 
     try {
       setError('');
-      const data = await liveMatchService.getMatchDetails(matchId);
+      const { match: data, canEdit: editAllowed } = await liveMatchService.getMatchDetails(matchId);
       
       // Detect new events
       const currentEventCount = data.events?.length || 0;
@@ -52,6 +53,7 @@ export const LiveMatchManager: React.FC = () => {
       lastEventCountRef.current = currentEventCount;
       
       setMatch(data);
+      setCanEdit(editAllowed);
 
       // Start timer if match is live
       if ((data.status === 'live' || data.status === 'halftime' || data.status === 'second_half') && !matchStartTime) {
@@ -140,14 +142,7 @@ export const LiveMatchManager: React.FC = () => {
       } catch (_err) {
       }
 
-      // FALLBACK 2: Mock players
-      const mockPlayers: Player[] = Array.from({ length: 11 }, (_, i) => ({
-        id: `player-${i + 1}`,
-        name: `Jogador ${i + 1}`,
-        number: i + 1,
-        teamId
-      }));
-      setPlayers(mockPlayers);
+      // No lineup or squad found – leave player list empty (action buttons will be disabled)
       setLoadedTeamId(teamId);
     } catch (_err) {
       setError('Erro ao carregar plantel da equipa');
@@ -237,6 +232,7 @@ export const LiveMatchManager: React.FC = () => {
     playerId?: string;
     playerInId?: string;
     playerOutId?: string;
+    assistId?: string;
   }) => {
     if (!matchId) return;
 
@@ -389,7 +385,25 @@ export const LiveMatchManager: React.FC = () => {
   }
 
   // === MAIN RENDER ===
-  const isTeamManager = user?.assignedTeam === match.homeTeam.id || user?.assignedTeam === match.awayTeam.id;
+  // canEdit é calculado pelo servidor (admin ou manager da equipa deste jogo)
+  // Fallback local para compatibilidade quando o token já estava em memória
+  const isTeamManager = canEdit ||
+    user?.role === 'admin' ||
+    user?.assignedTeam === match.homeTeam.id ||
+    user?.assignedTeam === (match.homeTeam as any)._id?.toString?.() ||
+    user?.assignedTeam === match.awayTeam.id ||
+    user?.assignedTeam === (match.awayTeam as any)._id?.toString?.();
+
+  console.log('[LiveMatchManager] isTeamManager check:', {
+    canEdit,
+    userRole: user?.role,
+    userAssignedTeam: user?.assignedTeam,
+    homeTeamId: match.homeTeam.id,
+    homeTeamRawId: (match.homeTeam as any)._id,
+    awayTeamId: match.awayTeam.id,
+    awayTeamRawId: (match.awayTeam as any)._id,
+    isTeamManager,
+  });
 
   return (
     <div className="live-match-manager">
@@ -434,6 +448,20 @@ export const LiveMatchManager: React.FC = () => {
           <span>🔔</span>
           <span>Novo evento registado!</span>
         </motion.div>
+      )}
+
+      {/* DEBUG: Permissões (remover depois) */}
+      {!isTeamManager && (
+        <div style={{ background: '#7c3aed', color: '#fff', padding: '12px', borderRadius: '8px', marginBottom: '8px', fontSize: '12px', wordBreak: 'break-all' }}>
+          <strong>⚠️ DEBUG - Porque não aparece o painel de gestão:</strong><br/>
+          canEdit (servidor): <b>{String(canEdit)}</b><br/>
+          role: <b>{user?.role}</b><br/>
+          assignedTeam: <b>{user?.assignedTeam ?? 'null'}</b><br/>
+          homeTeam.id: <b>{match.homeTeam.id}</b><br/>
+          homeTeam._id: <b>{(match.homeTeam as any)._id}</b><br/>
+          awayTeam.id: <b>{match.awayTeam.id}</b><br/>
+          awayTeam._id: <b>{(match.awayTeam as any)._id}</b>
+        </div>
       )}
 
       {/* Score Display */}

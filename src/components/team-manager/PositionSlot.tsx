@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Star } from 'lucide-react';
 import { LineupPlayer } from '@/types';
 import { POSITION_COLORS } from '@/utils/formations';
 
@@ -196,7 +196,7 @@ export function PositionSlot({
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.25, type: 'spring' }}
           >
-            ⭐
+            <Star className="w-3.5 h-3.5 fill-white text-white" />
           </motion.div>
         )}
 

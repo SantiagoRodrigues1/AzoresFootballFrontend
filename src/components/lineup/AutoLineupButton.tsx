@@ -19,8 +19,7 @@ export const AutoLineupButton: React.FC<AutoLineupButtonProps> = ({
     setIsGenerating(true);
     try {
       await onGenerate();
-    } catch (error) {
-      console.error('Erro ao gerar escalação automática:', error);
+    } catch {
     } finally {
       setIsGenerating(false);
     }

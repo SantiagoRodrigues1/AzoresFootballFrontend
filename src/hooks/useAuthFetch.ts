@@ -34,7 +34,7 @@ export function useAuthFetch() {
       if (requiresAuth && token) {
         headers['Authorization'] = `Bearer ${token}`;
       } else if (requiresAuth && !token) {
-        console.warn('⚠️ Endpoint protegido mas sem token disponível');
+        // Auth required but no token – request will proceed unauthenticated
       }
 
       try {
@@ -55,11 +55,6 @@ export function useAuthFetch() {
             invalidateSession(response.status);
           }
 
-          console.error(`❌ [${response.status}] ${endpoint}`, {
-            error: data?.message || data?.error || data,
-            requiresAuth,
-            hasToken: !!token,
-          });
         }
 
         return {
@@ -69,7 +64,6 @@ export function useAuthFetch() {
           error: !response.ok ? (data?.message || data?.error || 'Erro desconhecido') : null,
         };
       } catch (error) {
-        console.error('❌ Erro na requisição:', endpoint, error);
         return {
           ok: false,
           status: 0,

@@ -87,7 +87,6 @@ const AdminMatches: React.FC = () => {
       const matches = await matchService.getAllAdminMatches(token || undefined);
       setAllMatches(matches);
     } catch (err) {
-      console.error('❌ Erro ao carregar jogos:', err);
       setError('Erro ao carregar jogos. Tente novamente.');
     } finally {
       setLoading(false);

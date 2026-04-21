@@ -368,6 +368,77 @@ export async function getTeamManagerMatch(id: string) {
   };
 }
 
+// ===========================
+// JOURNALIST REQUESTS
+// ===========================
+
+export async function submitJournalistRequest(payload: { name: string; company: string }) {
+  const { data } = await api.post('/journalist/request', payload);
+  return data.data;
+}
+
+export async function getMyJournalistRequest() {
+  const { data } = await api.get('/journalist/my-request');
+  return data.data as { _id: string; name: string; company: string; status: 'pending' | 'approved' | 'rejected'; rejectionReason?: string | null; createdAt: string } | null;
+}
+
+export async function getMyJournalistNews() {
+  const { data } = await api.get('/journalist/my-news');
+  return data.data as NewsItem[];
+}
+
+// ===========================
+// ADMIN — JOURNALIST REQUESTS
+// ===========================
+
+export async function getAdminJournalistRequests(status?: string) {
+  const params = status ? { status } : {};
+  const { data } = await api.get('/journalist/admin/requests', { params });
+  return data.data as Array<{
+    _id: string;
+    userId: { _id: string; name: string; email: string; role: string; avatar?: string | null };
+    name: string;
+    company: string;
+    status: 'pending' | 'approved' | 'rejected';
+    reviewedBy?: { name: string } | null;
+    reviewedAt?: string | null;
+    rejectionReason?: string | null;
+    createdAt: string;
+  }>;
+}
+
+export async function approveJournalistRequest(id: string) {
+  const { data } = await api.put(`/journalist/admin/requests/${id}/approve`);
+  return data.data;
+}
+
+export async function rejectJournalistRequest(id: string, reason?: string) {
+  const { data } = await api.put(`/journalist/admin/requests/${id}/reject`, { reason });
+  return data.data;
+}
+
+// ===========================
+// ADMIN — USER MANAGEMENT
+// ===========================
+
+export async function getAdminUsers(params?: { role?: string; search?: string; page?: number }) {
+  const { data } = await api.get('/journalist/admin/users', { params });
+  return data as {
+    data: Array<{ _id: string; name: string; email: string; role: string; plan: string; status: string; avatar?: string | null; createdAt: string }>;
+    pagination: { page: number; totalPages: number; total: number };
+  };
+}
+
+export async function changeUserRole(userId: string, role: string) {
+  const { data } = await api.put(`/journalist/admin/users/${userId}/role`, { role });
+  return data.data;
+}
+
+export async function createAdminUser(payload: { name: string; email: string; password: string; role: string }) {
+  const { data } = await api.post('/journalist/admin/users', payload);
+  return data.data;
+}
+
 export async function getTeamManagerLineup(matchId: string, teamId: string) {
   try {
     const { data } = await api.get(`/team-manager/lineups/${matchId}/${teamId}`);

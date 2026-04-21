@@ -1,10 +1,12 @@
 // src/pages/AdminPanelPage.tsx
 import { useState } from 'react';
-import { BarChart3, History, Download, Users, Trophy, ArrowLeft } from 'lucide-react';
+import { BarChart3, History, Download, Users, Trophy, ArrowLeft, Newspaper, UserCog } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { IonButton, IonTabs, IonTabBar, IonIcon, IonTabButton, IonLabel } from '@ionic/react';
 import { AdminDashboardPage } from './AdminDashboardPage';
 import { AdminAuditLogsPage } from './AdminAuditLogsPage';
+import { AdminJournalistRequestsPage } from './AdminJournalistRequestsPage';
+import { AdminUsersPage } from './AdminUsersPage';
 import { useAuth } from '@/contexts/AuthContext';
 import { API_URL } from '@/services/api';
 
@@ -104,13 +106,19 @@ export function AdminPanelPage() {
           </div>
         )}
 
+        {/* Journalist Requests Tab */}
+        {activeTab === 'journalist' && <AdminJournalistRequestsPage />}
+
+        {/* Users Management Tab */}
+        {activeTab === 'users' && <AdminUsersPage />}
+
         {/* TABBar Navigation */}
         <IonTabBar slot="bottom" color="light" className="flex gap-2 justify-around p-4 bg-card border-t border-border sticky bottom-0 z-40">
           <IonTabButton
             tab="dashboard"
             selected={activeTab === 'dashboard'}
             onClick={() => setActiveTab('dashboard')}
-            className="flex flex-col items-center p-3 rounded-lg hover:bg-slate-100 transition-colors"
+            className="flex flex-col items-center p-3 rounded-lg hover:bg-muted transition-colors"
           >
             <BarChart3 className={`w-6 h-6 ${activeTab === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`} />
             <IonLabel className="text-xs">Dashboard</IonLabel>
@@ -120,7 +128,7 @@ export function AdminPanelPage() {
             tab="stats"
             selected={activeTab === 'stats'}
             onClick={() => setActiveTab('stats')}
-            className="flex flex-col items-center p-3 rounded-lg hover:bg-slate-100 transition-colors"
+            className="flex flex-col items-center p-3 rounded-lg hover:bg-muted transition-colors"
           >
             <Trophy className={`w-6 h-6 ${activeTab === 'stats' ? 'text-primary' : 'text-muted-foreground'}`} />
             <IonLabel className="text-xs">Estatísticas</IonLabel>
@@ -130,7 +138,7 @@ export function AdminPanelPage() {
             tab="audit"
             selected={activeTab === 'audit'}
             onClick={() => setActiveTab('audit')}
-            className="flex flex-col items-center p-3 rounded-lg hover:bg-slate-100 transition-colors"
+            className="flex flex-col items-center p-3 rounded-lg hover:bg-muted transition-colors"
           >
             <History className={`w-6 h-6 ${activeTab === 'audit' ? 'text-primary' : 'text-muted-foreground'}`} />
             <IonLabel className="text-xs">Auditoria</IonLabel>
@@ -138,11 +146,31 @@ export function AdminPanelPage() {
 
           <IonTabButton
             tab="management"
-            className="flex flex-col items-center p-3 rounded-lg hover:bg-slate-100 transition-colors"
+            className="flex flex-col items-center p-3 rounded-lg hover:bg-muted transition-colors"
             onClick={() => navigate('/teams')}
           >
             <Users className="w-6 h-6 text-muted-foreground" />
             <IonLabel className="text-xs">Equipas</IonLabel>
+          </IonTabButton>
+
+          <IonTabButton
+            tab="journalist"
+            selected={activeTab === 'journalist'}
+            onClick={() => setActiveTab('journalist')}
+            className="flex flex-col items-center p-3 rounded-lg hover:bg-muted transition-colors"
+          >
+            <Newspaper className={`w-6 h-6 ${activeTab === 'journalist' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <IonLabel className="text-xs">Jornalistas</IonLabel>
+          </IonTabButton>
+
+          <IonTabButton
+            tab="users"
+            selected={activeTab === 'users'}
+            onClick={() => setActiveTab('users')}
+            className="flex flex-col items-center p-3 rounded-lg hover:bg-muted transition-colors"
+          >
+            <UserCog className={`w-6 h-6 ${activeTab === 'users' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <IonLabel className="text-xs">Utilizadores</IonLabel>
           </IonTabButton>
         </IonTabBar>
       </IonTabs>

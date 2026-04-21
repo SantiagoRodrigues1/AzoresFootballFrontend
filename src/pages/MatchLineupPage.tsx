@@ -244,40 +244,24 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
         }
 
         if (teamId) {
-          const squadRes = await fetch(`${API_URL}/teams/${teamId}`, {
+          const squadRes = await fetch(`${API_URL}/players/team/${teamId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
           if (squadRes.ok) {
             const squadData = await squadRes.json();
-            setSquad(squadData);
+            const players = squadData.data || squadData.players || [];
+            setSquad({ players });
 
             // Convert squad to call-up players
-            const callUpPlayers: CallUpPlayer[] = (squadData.players || []).map(
+            const callUpPlayers: CallUpPlayer[] = players.map(
               (p: any) => normalizeCallUpPlayer(p)
             );
             setCallUpPlayers(callUpPlayers);
           } else {
-            // Fallback: Create mock players for testing
-            const mockPlayers: CallUpPlayer[] = [
-              { playerId: '1', playerName: 'João Silva', playerNumber: 1, position: 'goalkeeper', selected: false, isStarter: true },
-              { playerId: '2', playerName: 'Pedro Santos', playerNumber: 3, position: 'defender', selected: false, isStarter: true },
-              { playerId: '3', playerName: 'Carlos Oliveira', playerNumber: 4, position: 'defender', selected: false, isStarter: true },
-              { playerId: '4', playerName: 'José Marques', playerNumber: 5,  position: 'defender', selected: false, isStarter: true },
-              { playerId: '5', playerName: 'Miguel Costa', playerNumber: 6, position: 'defender', selected: false, isStarter: true },
-              { playerId: '6', playerName: 'Rui Ferreira', playerNumber: 7, position: 'midfielder', selected: false, isStarter: true },
-              { playerId: '7', playerName: 'André Teixeira', playerNumber: 8, position: 'midfielder', selected: false, isStarter: true },
-              { playerId: '8', playerName: 'Nuno Gomes', playerNumber: 10, position: 'midfielder', selected: false, isStarter: true },
-              { playerId: '9', playerName: 'Bruno Mendes', playerNumber: 11, position: 'midfielder', selected: false, isStarter: true },
-              { playerId: '10', playerName: 'Gonçalo Dias', playerNumber: 9, position: 'forward', selected: false, isStarter: true },
-              { playerId: '11', playerName: 'Tomás Ribeiro', playerNumber: 14, position: 'forward', selected: false, isStarter: true },
-              // Substitutes
-              { playerId: '12', playerName: 'Ricardo Alves', playerNumber: 12, position: 'goalkeeper', selected: false, isStarter: false },
-              { playerId: '13', playerName: 'Sergio Gomes', playerNumber: 13, position: 'defender', selected: false, isStarter: false },
-              { playerId: '14', playerName: 'Paulo Rocha', playerNumber: 15, position: 'midfielder', selected: false, isStarter: false },
-              { playerId: '15', playerName: 'Cristiano Santos', playerNumber: 16, position: 'forward', selected: false, isStarter: false },
-            ];
-            setCallUpPlayers(mockPlayers);
+            const errorData = await squadRes.json().catch(() => ({}));
+            console.error('Erro ao carregar plantel:', errorData.message || squadRes.status);
+            setError('Não foi possível carregar o plantel. Verifique se a equipa tem jogadores registados.');
           }
         }
       } catch (err) {
@@ -337,7 +321,7 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
             setTimeout(() => setSuccessMessage(null), 4000);
           }
         } else if (response.status !== 404) {
-          console.warn('Error loading saved lineup:', response.status);
+          // Non-critical: lineup may not exist yet
         }
       } catch (_err) {
         // Don't show error to user - this is optional functionality
@@ -364,7 +348,7 @@ export function MatchLineupPage({ onLineupSaved }: MatchLineupPageProps) {
         } else if (response.status === 403) {
           // Silently ignore 403 - user may not have permission to see both lineups
         } else {
-          console.warn(`Unexpected status ${response.status} when fetching both lineups`);
+          // Non-critical: silently ignore unexpected statuses
         }
       } catch (_err) {
       } finally {

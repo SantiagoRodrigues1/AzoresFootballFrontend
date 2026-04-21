@@ -138,7 +138,7 @@ export function TeamMembersModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl"
+          className="bg-card rounded-t-3xl sm:rounded-3xl w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -162,7 +162,7 @@ export function TeamMembersModal({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+                className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm"
               >
                 {error}
               </motion.div>
@@ -172,15 +172,15 @@ export function TeamMembersModal({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm"
+                className="p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-300 text-sm"
               >
                 {success}
               </motion.div>
             )}
 
             {/* Add New Member */}
-            <div className="space-y-4 p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-              <h3 className="font-semibold text-gray-900">Adicionar Novo Membro</h3>
+            <div className="space-y-4 p-5 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+              <h3 className="font-semibold text-foreground">Adicionar Novo Membro</h3>
 
               <div className="space-y-3">
                 <IonItem className="ion-item-custom">
@@ -204,10 +204,10 @@ export function TeamMembersModal({
                     className="ion-select-custom"
                   >
                     <IonSelectOption value="team_manager">
-                      🏟️ Gestor da Equipa (Seleções e Escalações)
+                      Gestor da Equipa (Seleções e Escalações)
                     </IonSelectOption>
                     <IonSelectOption value="team_president">
-                      👔 Presidente da Equipa (Administração)
+                      Presidente da Equipa (Administração)
                     </IonSelectOption>
                   </IonSelect>
                 </IonItem>
@@ -221,10 +221,10 @@ export function TeamMembersModal({
 
             {/* Current Members */}
             <div className="space-y-3">
-              <h3 className="font-semibold text-gray-900">Membros Atuais</h3>
+              <h3 className="font-semibold text-foreground">Membros Atuais</h3>
 
               {members.length === 0 ? (
-                <div className="text-center py-6 text-muted-foreground text-sm bg-gray-50 rounded-lg">
+                <div className="text-center py-6 text-muted-foreground text-sm bg-muted rounded-lg">
                   Nenhum membro adicionado para esta equipa
                 </div>
               ) : (
@@ -234,17 +234,17 @@ export function TeamMembersModal({
                       key={member.id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-primary/30 transition-all"
+                      className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 truncate">{member.name}</p>
+                        <p className="font-semibold text-foreground truncate">{member.name}</p>
                         <p className="text-sm text-muted-foreground truncate">{member.email}</p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {member.role === 'team_manager'
-                            ? '🏟️ Gestor da Equipa'
+                            ? 'Gestor da Equipa'
                             : member.role === 'team_president'
-                            ? '👔 Presidente'
-                            : '👑 Admin'}
+                            ? 'Presidente'
+                            : 'Admin'}
                         </p>
                       </div>
 
@@ -265,7 +265,7 @@ export function TeamMembersModal({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-4 border-t border-slate-200">
+            <div className="flex gap-3 pt-4 border-t border-border">
               <IonButton
                 expand="block"
                 color="medium"
